@@ -60,7 +60,7 @@ O repositório publica progresso, decisões técnicas, histórico e critérios d
 | Integridade estrutural e estabilidade | **Concluído** | Zero falha estrutural; correções de crash, digitação e varredura contínua validadas. |
 | Validação privada ampliada | **Em andamento** | Testes reais de narrativa, interface, combate, guias, Crônicas e atualização. |
 | Candidato público e instalação assistida | **Pendente** | Exige matriz de testes maior, rollback final e documentação completa de instalação. |
-| Versão 1.0.0 | **Pendente** | Somente após qualidade suficiente e aprovação dos critérios finais definidos por Kacks. |
+| Versão 1.0.0 | **Pendente** | Somente após qualidade suficiente e aprovação dos critérios finais definidos por mim. |
 
 O detalhamento técnico está em [Status técnico](./docs/STATUS-TECNICO.md), e os próximos critérios estão no [Roadmap](./docs/ROADMAP.md).
 
@@ -74,9 +74,11 @@ Consulte o [Histórico público](./docs/HISTORICO.md) para os números e valida�
 
 ## 04 / AUTORIA E FERRAMENTAS
 
-**Brown Dust 2 PT-BR é um projeto criado, dirigido, mantido e validado por Kacks.** A definição do escopo, o padrão de qualidade, as decisões editoriais, os testes no cliente, a compatibilidade e a publicação permanecem sob responsabilidade do autor do projeto.
+**Brown Dust 2 PT-BR é um projeto criado, dirigido, mantido e validado por mim.** A definição do escopo, o padrão de qualidade, as decisões editoriais, os testes no cliente, a compatibilidade e a publicação permanecem sob minha responsabilidade.
 
-O **OpenAI Codex** integra o fluxo como ferramenta auxiliar. Ele foi utilizado para produzir as traduções PT-BR das entradas do catálogo, aplicar correções orientadas pelo projeto, apoiar o desenvolvimento do plugin, automatizar auditorias e acelerar a documentação. A engenharia e o controle de qualidade avançaram de forma colaborativa: Kacks definiu requisitos, identificou problemas durante o uso real, conduziu os testes e aprovou os resultados; Codex auxiliou na execução técnica em grande escala.
+O **OpenAI Codex** integra o fluxo como ferramenta auxiliar. Ele foi utilizado para produzir as traduções PT-BR das entradas do catálogo, aplicar correções orientadas pelo projeto, apoiar o desenvolvimento do plugin, automatizar auditorias e acelerar a documentação.
+
+A engenharia e o controle de qualidade avançaram de forma colaborativa: eu defini os requisitos, identifiquei problemas durante o uso real, conduzi os testes e aprovei os resultados; o Codex auxiliou na execução técnica em grande escala.
 
 Na versão 0.9.6, **198.773 entradas** permanecem classificadas internamente como `machine` e **24.873 entradas** possuem tratamento editorial explícito. Essas classificações descrevem o processo do catálogo e não significam revisão humana profissional independente de cada frase. O projeto mantém essa informação pública para evitar qualquer ambiguidade sobre como a tradução foi produzida.
 

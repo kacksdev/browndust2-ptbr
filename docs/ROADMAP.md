@@ -53,7 +53,7 @@ Este roadmap usa marcos verificáveis, não uma porcentagem artificial. A versã
 - Qualidade suficiente para uso comunitário amplo.
 - Compatibilidade, limitações e autoria documentadas sem omissões.
 - Compatibilidade, limitações conhecidas e critérios de lançamento documentados.
-- Publicação do pacote somente por decisão de Kacks quando o mod estiver pronto para a comunidade.
+- Publicação do pacote somente por minha decisão, quando o mod estiver pronto para a comunidade.
 
 ## O que não será antecipado
 
