@@ -59,8 +59,8 @@ O repositório publica progresso, decisões técnicas, histórico e critérios d
 | Cobertura textual e terminológica | **Concluído** | 223.743 entradas efetivas e resíduos conhecidos classificados. |
 | Integridade estrutural e estabilidade | **Concluído** | Zero falha estrutural; correções de crash, digitação e varredura contínua validadas. |
 | Validação privada ampliada | **Em andamento** | Testes reais de narrativa, interface, combate, guias, Crônicas e atualização. |
-| Candidato público e instalação assistida | **Pendente** | Exige matriz de testes maior, rollback final e critérios públicos de suporte. |
-| Versão 1.0.0 | **Pendente** | Somente após qualidade suficiente para jogadores e apresentação formal à empresa. |
+| Candidato público e instalação assistida | **Pendente** | Exige matriz de testes maior, rollback final e documentação completa de instalação. |
+| Versão 1.0.0 | **Pendente** | Somente após qualidade suficiente e aprovação dos critérios finais definidos por Kacks. |
 
 O detalhamento técnico está em [Status técnico](./docs/STATUS-TECNICO.md), e os próximos critérios estão no [Roadmap](./docs/ROADMAP.md).
 
@@ -90,14 +90,14 @@ Leia a atribuição completa em [Autoria e ferramentas](./docs/AUTORIA-E-FERRAME
 | **Identidade preservada** | Nomes próprios, músicas e marcas ficam no original quando traduzi-los prejudicaria a obra. |
 | **Integridade técnica** | Placeholders, tags, layout, paginação, carregamento e atualização não podem ser quebrados. |
 | **Compatibilidade declarada** | Toda versão informa exatamente qual cliente foi validado; atualização do jogo exige nova checagem. |
-| **Publicação responsável** | Sem pacote público antes de instalação, remoção, suporte e regressões estarem suficientemente cobertos. |
+| **Publicação responsável** | Sem pacote público antes de instalação, remoção, rollback e regressões estarem suficientemente cobertos. |
 
 ## 06 / LIMITES E DIREITOS
 
 - Projeto comunitário para **PC**, gratuito e sem monetização.
 - Nenhum arquivo proprietário do jogo é distribuído neste repositório.
 - Brown Dust 2, personagens, nomes e artes pertencem aos respectivos titulares.
-- Este projeto não é tradução oficial, não representa endosso e não substitui o suporte do jogo.
+- Este projeto não é uma tradução oficial e não representa endosso dos titulares do jogo.
 - A existência pública desta documentação **não significa liberação do mod**.
 
 Sugestões de documentação podem ser enviadas pelas [Issues](https://github.com/kacksdev/browndust2-ptbr/issues). Pull requests não alteram o projeto automaticamente e só podem ser integrados pelo proprietário.
