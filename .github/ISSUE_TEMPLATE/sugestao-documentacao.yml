@@ -1,0 +1,20 @@
+name: Sugestão de documentação
+description: Proponha uma melhoria de clareza ou organização.
+title: "[SUGESTÃO] "
+labels:
+  - documentation
+body:
+  - type: textarea
+    id: suggestion
+    attributes:
+      label: Sugestão
+      description: Diga o que mudaria e por quê.
+    validations:
+      required: true
+  - type: checkboxes
+    id: scope
+    attributes:
+      label: Escopo
+      options:
+        - label: A sugestão é apenas documental e não pede acesso ou download do mod.
+          required: true

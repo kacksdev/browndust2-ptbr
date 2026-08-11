@@ -1,0 +1,36 @@
+name: Informação incorreta
+description: Sinalize uma afirmação pública que esteja incorreta ou desatualizada.
+title: "[DOC] "
+labels:
+  - documentation
+body:
+  - type: markdown
+    attributes:
+      value: |
+        Este repositório não distribui o mod. Use este formulário somente para a documentação pública.
+  - type: input
+    id: page
+    attributes:
+      label: Página ou seção
+      placeholder: README, Roadmap, Histórico...
+    validations:
+      required: true
+  - type: textarea
+    id: problem
+    attributes:
+      label: O que está incorreto?
+      description: Explique a divergência de forma objetiva.
+    validations:
+      required: true
+  - type: input
+    id: source
+    attributes:
+      label: Fonte verificável
+      description: Prefira uma página oficial e não publique dados pessoais.
+  - type: checkboxes
+    id: safety
+    attributes:
+      label: Confirmação
+      options:
+        - label: Não incluí arquivos do jogo, credenciais, dados pessoais ou links para builds privados.
+          required: true

@@ -1,0 +1,12 @@
+<svg xmlns="http://www.w3.org/2000/svg" width="1200" height="42" viewBox="0 0 1200 42" role="img" aria-label="Divisor desenhado a tinta">
+  <rect width="1200" height="42" fill="none"/>
+  <g fill="none" stroke="#171717" stroke-linecap="round">
+    <path d="M18 20 C142 17 224 24 350 19 S570 23 696 18 S914 24 1182 19" stroke-width="3.2"/>
+    <path d="M26 25 C180 22 295 28 445 23 S758 27 1174 23" stroke-width="1.1" opacity=".72"/>
+    <path d="M70 13 l16 16 M91 12 l16 16 M1094 12 l16 16 M1115 12 l16 16" stroke-width="2"/>
+  </g>
+  <g fill="#171717">
+    <rect x="18" y="15" width="34" height="11" transform="rotate(-2 35 20.5)"/>
+    <rect x="1148" y="15" width="34" height="11" transform="rotate(2 1165 20.5)"/>
+  </g>
+</svg>
