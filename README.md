@@ -72,13 +72,15 @@ O detalhamento técnico está em [Status técnico](./docs/STATUS-TECNICO.md), e 
 
 Consulte o [Histórico público](./docs/HISTORICO.md) para os números e validações de cada versão.
 
-## 04 / TRADUÇÃO E INTELIGÊNCIA ARTIFICIAL
+## 04 / AUTORIA E FERRAMENTAS
 
-O projeto usa **OpenAI Codex** como ferramenta de inteligência artificial para tradução, revisão contextual, engenharia do plugin, automação e auditoria. O mantenedor orienta o trabalho, define os critérios e executa testes no jogo.
+**Brown Dust 2 PT-BR é um projeto criado, dirigido, mantido e validado por Kacks.** A definição do escopo, o padrão de qualidade, as decisões editoriais, os testes no cliente, a compatibilidade e a publicação permanecem sob responsabilidade do autor do projeto.
 
-A maior parte do catálogo atual nasceu de processamento por IA. Na versão 0.9.6, **198.773 entradas** permanecem classificadas como tradução de máquina e **24.873 entradas** possuem estado de revisão editorial explícita; isso **não equivale a uma revisão humana profissional independente de cada frase**. Traduções literais, escolhas contextuais inadequadas ou regressões ainda podem existir — justamente por isso a distribuição continua fechada.
+O **OpenAI Codex** integra o fluxo como ferramenta auxiliar. Ele foi utilizado para produzir as traduções PT-BR das entradas do catálogo, aplicar correções orientadas pelo projeto, apoiar o desenvolvimento do plugin, automatizar auditorias e acelerar a documentação. A engenharia e o controle de qualidade avançaram de forma colaborativa: Kacks definiu requisitos, identificou problemas durante o uso real, conduziu os testes e aprovou os resultados; Codex auxiliou na execução técnica em grande escala.
 
-Leia a política completa em [Transparência sobre IA](./docs/TRANSPARENCIA-IA.md). A ferramenta utilizada é o [OpenAI Codex](https://developers.openai.com/codex/).
+Na versão 0.9.6, **198.773 entradas** permanecem classificadas internamente como `machine` e **24.873 entradas** possuem tratamento editorial explícito. Essas classificações descrevem o processo do catálogo e não significam revisão humana profissional independente de cada frase. O projeto mantém essa informação pública para evitar qualquer ambiguidade sobre como a tradução foi produzida.
+
+Leia a atribuição completa em [Autoria e ferramentas](./docs/AUTORIA-E-FERRAMENTAS.md).
 
 ## 05 / PRINCÍPIOS
 
