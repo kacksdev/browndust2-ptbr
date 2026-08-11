@@ -59,4 +59,4 @@ Este roadmap usa marcos verificáveis, não uma porcentagem artificial. A versã
 
 - Nenhum binário, catálogo traduzido, instalador ou código do mod será publicado neste repositório antes da liberação.
 - Uma atualização do jogo não será declarada compatível sem teste.
-- O estado de revisão por IA não será descrito como revisão humana integral.
+- A origem das traduções e o estado de revisão continuarão documentados sem serem descritos como revisão humana integral.
