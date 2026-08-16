@@ -2,7 +2,7 @@
 
 O projeto não atribui porcentagem de qualidade sem evidência. Cada marco avança a partir de catálogo auditado, testes no cliente e relatos reais.
 
-## 0.1.x — beta pública
+## 0.1.x: beta pública
 
 **Estado: atual**
 
@@ -12,7 +12,7 @@ O projeto não atribui porcentagem de qualidade sem evidência. Cada marco avan�
 - Incorporar correções contextuais confirmadas durante o uso.
 - Publicar compatibilidade somente após teste na versão indicada.
 
-## 0.x — revisão progressiva
+## 0.x: revisão progressiva
 
 **Estado: contínuo, sem prazo anunciado**
 
@@ -22,7 +22,7 @@ O projeto não atribui porcentagem de qualidade sem evidência. Cada marco avan�
 - Substituir entradas produzidas em escala por escolhas editoriais verificadas.
 - Preservar músicas, marcas, nomes próprios e elementos cuja tradução prejudique a identidade da obra.
 
-## 1.0.0 — tradução integralmente revisada
+## 1.0.0: tradução integralmente revisada
 
 **Estado: futura**
 

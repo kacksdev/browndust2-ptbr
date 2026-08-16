@@ -1,4 +1,4 @@
-# Status técnico — 0.1.0 beta
+# Status técnico: 0.1.0 beta
 
 ## Compatibilidade validada
 

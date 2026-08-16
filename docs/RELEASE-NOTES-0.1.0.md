@@ -1,5 +1,3 @@
-# Brown Dust 2 PT-BR 0.1.0 beta
-
 Primeira versão pública da tradução comunitária para PC.
 
 ## Compatibilidade
@@ -12,8 +10,8 @@ Primeira versão pública da tradução comunitária para PC.
 ## Cobertura e grau de revisão
 
 - 223.743 entradas efetivas;
-- 24.873 entradas com tratamento editorial explícito — 11,12%;
-- 198.773 entradas produzidas em escala com auxílio de IA — 88,84%;
+- 24.873 entradas com tratamento editorial explícito (11,12%);
+- 198.773 entradas produzidas em escala com auxílio de IA (88,84%);
 - 89 registros em rascunho e 8 reparos estruturais;
 - 293 títulos musicais preservados no original;
 - zero falha estrutural e zero item na fila automática vigente.
