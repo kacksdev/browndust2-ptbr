@@ -1,0 +1,14 @@
+* text=auto
+*.cs text eol=lf
+*.csproj text eol=lf
+*.json text eol=lf
+*.jsonl text eol=lf
+*.md text eol=lf
+*.ps1 text eol=crlf
+*.cmd text eol=crlf
+*.dll binary
+*.zip binary
+*.png binary
+*.jpg binary
+*.webp binary
+catalog/complete.jsonl -diff

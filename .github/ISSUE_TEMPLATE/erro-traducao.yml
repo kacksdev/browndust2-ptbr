@@ -1,0 +1,45 @@
+name: Erro de tradução
+description: Relate texto em inglês, literal, inadequado ao contexto ou formatado incorretamente.
+title: "[TRADUÇÃO] "
+labels:
+  - translation
+body:
+  - type: input
+    id: versions
+    attributes:
+      label: Versões
+      description: Informe a versão do mod e a versão exibida pelo cliente.
+      placeholder: Mod 0.1.0 beta / Cliente 2.32.7
+    validations:
+      required: true
+  - type: input
+    id: location
+    attributes:
+      label: Onde o texto aparece?
+      placeholder: História, personagem, episódio, menu ou sistema
+    validations:
+      required: true
+  - type: textarea
+    id: current
+    attributes:
+      label: Texto atual e contexto
+      description: Transcreva a frase e explique quem fala ou o que a tela representa.
+    validations:
+      required: true
+  - type: textarea
+    id: expected
+    attributes:
+      label: Resultado esperado
+      description: Se tiver uma sugestão, explique por que ela corresponde melhor ao contexto.
+  - type: textarea
+    id: evidence
+    attributes:
+      label: Captura de tela
+      description: Arraste uma imagem sem dados pessoais, se possível.
+  - type: checkboxes
+    id: safety
+    attributes:
+      label: Confirmação
+      options:
+        - label: Não incluí credenciais, saves, dados pessoais ou arquivos proprietários do jogo.
+          required: true

@@ -1,0 +1,26 @@
+name: Auditoria do catálogo
+
+on:
+  push:
+    branches: [main]
+  pull_request:
+    branches: [main]
+
+permissions:
+  contents: read
+
+jobs:
+  audit:
+    runs-on: ubuntu-latest
+    timeout-minutes: 15
+    steps:
+      - name: Obter repositório
+        uses: actions/checkout@v7
+      - name: Preparar Python
+        uses: actions/setup-python@v7
+        with:
+          python-version: "3.12"
+      - name: Auditar catálogo
+        run: python tools/FullTranslator/audit_catalog.py
+      - name: Confirmar relatório reproduzível
+        run: git diff --exit-code -- catalog/audit-report.json

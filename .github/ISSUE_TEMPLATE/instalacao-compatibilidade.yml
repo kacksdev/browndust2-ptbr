@@ -1,0 +1,49 @@
+name: Instalação ou compatibilidade
+description: Relate falha ao instalar, atualizar, remover ou executar o mod.
+title: "[SUPORTE] "
+labels:
+  - support
+body:
+  - type: input
+    id: versions
+    attributes:
+      label: Versões
+      placeholder: Mod 0.1.0 beta / Cliente 2.32.7 / Windows 11
+    validations:
+      required: true
+  - type: dropdown
+    id: stage
+    attributes:
+      label: Etapa afetada
+      options:
+        - Instalação
+        - Inicialização do jogo
+        - Execução dentro do jogo
+        - Atualização do jogo
+        - Atualização do mod
+        - Remoção
+    validations:
+      required: true
+  - type: textarea
+    id: behavior
+    attributes:
+      label: O que aconteceu?
+      description: Descreva as ações, a mensagem exibida e o resultado esperado.
+    validations:
+      required: true
+  - type: textarea
+    id: diagnostics
+    attributes:
+      label: Diagnóstico seguro
+      description: Inclua apenas o trecho necessário do log e remova nomes, caminhos pessoais e tokens.
+  - type: checkboxes
+    id: checklist
+    attributes:
+      label: Verificações
+      options:
+        - label: Baixei o pacote pela seção Releases e extraí o ZIP antes de executar.
+          required: true
+        - label: Fechei o jogo antes de instalar ou remover.
+          required: true
+        - label: Não incluí credenciais, saves, dados pessoais ou arquivos proprietários do jogo.
+          required: true

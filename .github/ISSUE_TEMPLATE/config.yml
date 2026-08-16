@@ -1,0 +1,8 @@
+blank_issues_enabled: false
+contact_links:
+  - name: Instalação e remoção
+    url: https://github.com/kacksdev/browndust2-ptbr/blob/main/docs/INSTALACAO.md
+    about: Consulte o passo a passo e o diagnóstico rápido antes de abrir um relato.
+  - name: Relato privado de segurança
+    url: https://github.com/kacksdev/browndust2-ptbr/security/advisories/new
+    about: Use este canal para vulnerabilidades, credenciais ou dados pessoais.

@@ -1,0 +1,45 @@
+BD2 PT-BR - AVISO DE LICENCIAMENTO
+
+1. Código-fonte original
+
+Copyright (c) 2026 Kacks
+
+Permission is hereby granted, free of charge, to any person obtaining a copy
+of the original source code and associated documentation files (the
+"Software"), to deal in the Software without restriction, including without
+limitation the rights to use, copy, modify, merge, publish, distribute,
+sublicense, and/or sell copies of the Software, and to permit persons to whom
+the Software is furnished to do so, subject to the following conditions:
+
+The above copyright notice and this permission notice shall be included in all
+copies or substantial portions of the Software.
+
+THE SOFTWARE IS PROVIDED "AS IS", WITHOUT WARRANTY OF ANY KIND, EXPRESS OR
+IMPLIED, INCLUDING BUT NOT LIMITED TO THE WARRANTIES OF MERCHANTABILITY,
+FITNESS FOR A PARTICULAR PURPOSE AND NONINFRINGEMENT. IN NO EVENT SHALL THE
+AUTHORS OR COPYRIGHT HOLDERS BE LIABLE FOR ANY CLAIM, DAMAGES OR OTHER
+LIABILITY, WHETHER IN AN ACTION OF CONTRACT, TORT OR OTHERWISE, ARISING FROM,
+OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN THE
+SOFTWARE.
+
+2. Catálogo de tradução
+
+As contribuições autorais originais do catálogo de tradução são disponibilizadas
+sob a licença Creative Commons Attribution-NonCommercial-ShareAlike 4.0
+International (CC BY-NC-SA 4.0), somente na extensão em que os contribuidores
+possuam direitos para licenciá-las:
+
+https://creativecommons.org/licenses/by-nc-sa/4.0/
+
+Essa licença não concede direitos sobre Brown Dust 2 nem sobre textos, marcas,
+personagens, imagens, sons ou outros materiais pertencentes aos titulares do
+jogo original.
+
+3. Conteúdo de terceiros
+
+Brown Dust 2 e seus materiais pertencem aos respectivos titulares. BepInEx,
+Harmony, Newtonsoft.Json, Unity e demais dependências conservam suas próprias
+licenças. Nenhuma licença deste arquivo substitui os termos dessas dependências.
+
+O projeto comunitário Brown Dust 2 PT-BR é distribuído gratuitamente e sem vínculo,
+patrocínio ou aprovação da NEOWIZ ou da GAMFS N.

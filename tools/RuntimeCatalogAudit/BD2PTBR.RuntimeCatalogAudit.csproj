@@ -1,0 +1,16 @@
+<Project Sdk="Microsoft.NET.Sdk">
+  <PropertyGroup>
+    <OutputType>Exe</OutputType>
+    <TargetFramework>net8.0</TargetFramework>
+    <ImplicitUsings>disable</ImplicitUsings>
+    <Nullable>disable</Nullable>
+    <LangVersion>12.0</LangVersion>
+    <AssemblyName>BD2PTBR.RuntimeCatalogAudit</AssemblyName>
+  </PropertyGroup>
+  <ItemGroup>
+    <Compile Include="..\..\src\BD2PTBR.Plugin\BD2PTBR\PlaceholderValidator.cs" Link="PlaceholderValidator.cs" />
+    <Reference Include="Newtonsoft.Json">
+      <HintPath>..\..\lib\references\Newtonsoft.Json.dll</HintPath>
+    </Reference>
+  </ItemGroup>
+</Project>

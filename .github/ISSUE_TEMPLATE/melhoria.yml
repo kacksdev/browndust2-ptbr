@@ -1,0 +1,27 @@
+name: Melhoria técnica ou documental
+description: Sugira uma alteração objetiva no código, instalador, documentação ou auditoria.
+title: "[MELHORIA] "
+labels:
+  - enhancement
+body:
+  - type: textarea
+    id: problem
+    attributes:
+      label: Problema ou oportunidade
+      description: Explique o que pode ser melhorado e quem é afetado.
+    validations:
+      required: true
+  - type: textarea
+    id: proposal
+    attributes:
+      label: Proposta
+      description: Descreva uma solução concreta e verificável.
+    validations:
+      required: true
+  - type: checkboxes
+    id: safety
+    attributes:
+      label: Confirmação
+      options:
+        - label: A sugestão não depende de burlar autenticação, segurança ou proteção do jogo.
+          required: true

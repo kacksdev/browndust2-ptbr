@@ -1,0 +1,23 @@
+# Compilação e caches
+**/bin/
+**/obj/
+**/__pycache__/
+*.pyc
+.vs/
+.idea/
+
+# Artefatos locais
+dist/
+work/
+*.log
+*.tmp
+
+# Referências obtidas da instalação local do jogo
+lib/references/*.dll
+!lib/references/.gitkeep
+
+# Dados locais do carregador
+BepInEx/
+doorstop_config.ini
+winhttp.dll
+.doorstop_version
