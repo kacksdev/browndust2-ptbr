@@ -4,6 +4,7 @@
     <TargetFramework>net472</TargetFramework>
     <UseWPF>true</UseWPF>
     <AssemblyName>BD2PTBR-Installer</AssemblyName>
+    <ApplicationIcon>Assets\kacks-installer.ico</ApplicationIcon>
     <RootNamespace>BD2PTBR.Installer</RootNamespace>
     <ApplicationManifest>app.manifest</ApplicationManifest>
     <Version>0.1.1</Version>
@@ -25,7 +26,7 @@
 
   <ItemGroup>
     <Resource Include="Assets\installer-background.png" />
-    <Resource Include="Assets\installer.ico" Condition="Exists('Assets\installer.ico')" />
+    <Resource Include="Assets\kacks-installer.ico" />
     <EmbeddedResource Include="Payload\BD2PTBR-payload.zip"
                       LogicalName="BD2PTBR.Payload.zip"
                       Condition="Exists('Payload\BD2PTBR-payload.zip')" />

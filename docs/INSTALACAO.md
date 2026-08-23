@@ -3,7 +3,7 @@
 ## Método recomendado
 
 1. Abra a seção **Releases** do repositório.
-2. Baixe `BD2PTBR-Installer-v0.1.1.exe` e, opcionalmente, o arquivo `.sha256`.
+2. Baixe `BD2PTBRv0.1.1.exe` e, opcionalmente, o arquivo `.sha256`.
 3. Feche Brown Dust 2 e o launcher.
 4. Abra o instalador.
 5. Confirme a pasta detectada ou clique em **Escolher pasta**.

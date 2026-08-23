@@ -10,7 +10,7 @@ $utf8NoBom = New-Object System.Text.UTF8Encoding($false)
 
 $repositoryRoot = (Resolve-Path -LiteralPath (Join-Path $PSScriptRoot '..')).Path
 if ([string]::IsNullOrWhiteSpace($InstallerPath)) {
-    $InstallerPath = Join-Path $repositoryRoot 'dist\BD2PTBR-Installer-v0.1.1.exe'
+    $InstallerPath = Join-Path $repositoryRoot 'dist\BD2PTBRv0.1.1.exe'
 }
 if ([string]::IsNullOrWhiteSpace($TestRoot)) {
     $TestRoot = Join-Path $repositoryRoot 'work\installer-tests-v011'

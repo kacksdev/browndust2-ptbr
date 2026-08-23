@@ -32,18 +32,49 @@ if ($LASTEXITCODE -ne 0) {
     throw 'A compilação do instalador falhou.'
 }
 
+$effectiveOutputRoot = if ([string]::IsNullOrWhiteSpace($OutputRoot)) {
+    Join-Path $repositoryRoot 'dist'
+}
+else {
+    [System.IO.Path]::GetFullPath($OutputRoot)
+}
+$installer = Join-Path $effectiveOutputRoot "BD2PTBRv$Version.exe"
+
 if (-not $SkipInstallerMatrix) {
-    $effectiveOutputRoot = if ([string]::IsNullOrWhiteSpace($OutputRoot)) {
-        Join-Path $repositoryRoot 'dist'
-    }
-    else {
-        [System.IO.Path]::GetFullPath($OutputRoot)
-    }
-    $installer = Join-Path $effectiveOutputRoot "BD2PTBR-Installer-v$Version.exe"
     & $tester -InstallerPath $installer
     if ($LASTEXITCODE -ne 0) {
         throw 'A matriz de validação do instalador falhou.'
     }
 }
 
+$gameBananaPackage = Join-Path $effectiveOutputRoot "BD2PTBRv$Version.zip"
+if (Test-Path -LiteralPath $gameBananaPackage) {
+    Remove-Item -LiteralPath $gameBananaPackage -Force
+}
+Add-Type -AssemblyName System.IO.Compression
+Add-Type -AssemblyName System.IO.Compression.FileSystem
+$archive = [System.IO.Compression.ZipFile]::Open($gameBananaPackage, [System.IO.Compression.ZipArchiveMode]::Create)
+try {
+    [System.IO.Compression.ZipFileExtensions]::CreateEntryFromFile(
+        $archive,
+        $installer,
+        [System.IO.Path]::GetFileName($installer),
+        [System.IO.Compression.CompressionLevel]::Optimal) | Out-Null
+}
+finally {
+    $archive.Dispose()
+}
+
+$verificationArchive = [System.IO.Compression.ZipFile]::OpenRead($gameBananaPackage)
+try {
+    if ($verificationArchive.Entries.Count -ne 1 -or
+        $verificationArchive.Entries[0].FullName -ne [System.IO.Path]::GetFileName($installer)) {
+        throw 'O pacote do GameBanana deve conter somente o instalador gráfico.'
+    }
+}
+finally {
+    $verificationArchive.Dispose()
+}
+
 Write-Host "Distribuição $Version compilada e validada."
+Write-Host "Pacote do GameBanana: $gameBananaPackage"

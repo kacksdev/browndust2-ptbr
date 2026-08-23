@@ -61,7 +61,7 @@ O pacote atual foi instalado e executado no cliente **v2.32.10 (FHD-221:619)**, 
 ## 03 / INSTALAÇÃO RÁPIDA
 
 1. Atualize o Brown Dust 2 pelo lançador oficial e feche o jogo.
-2. Na [Release mais recente](https://github.com/kacksdev/browndust2-ptbr/releases/latest), baixe **`BD2PTBR-Installer-v0.1.1.exe`**.
+2. Na [Release mais recente](https://github.com/kacksdev/browndust2-ptbr/releases/latest), baixe **`BD2PTBRv0.1.1.exe`**.
 3. Abra o executável e confirme a pasta detectada. Se necessário, use **Escolher pasta**.
 4. Clique em **Instalar** e aguarde a mensagem **Operação concluída**.
 5. Abra o jogo normalmente.

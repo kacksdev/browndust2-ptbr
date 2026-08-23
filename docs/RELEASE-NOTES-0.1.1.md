@@ -14,7 +14,7 @@ Primeira distribuição pública com o novo instalador gráfico e com o ciclo co
 Baixe somente:
 
 ```text
-BD2PTBR-Installer-v0.1.1.exe
+BD2PTBRv0.1.1.exe
 ```
 
 O arquivo `.sha256` permite conferir a integridade do executável. O manifesto JSON registra versões, métricas, dependências e o hash do pacote interno.
@@ -22,12 +22,14 @@ O arquivo `.sha256` permite conferir a integridade do executável. O manifesto J
 ## Instalação
 
 1. Feche Brown Dust 2 e o launcher.
-2. Abra `BD2PTBR-Installer-v0.1.1.exe`.
+2. Abra `BD2PTBRv0.1.1.exe`.
 3. Confirme a pasta detectada ou escolha manualmente a pasta que contém `Brown Dust II.exe`.
 4. Clique em **Instalar**.
 5. Aguarde **Operação concluída** e abra o jogo.
 
 O mesmo executável permite reparar, atualizar, verificar e remover o mod.
+
+O instalador usa a marca monocromática exclusiva de Kacks: um `K` em traço de tinta que se transforma em uma seta de instalação. Essa será a assinatura visual dos instaladores dos projetos.
 
 ## Correção da versão anterior
 

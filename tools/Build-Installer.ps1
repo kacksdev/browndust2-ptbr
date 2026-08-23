@@ -160,9 +160,9 @@ $loaderLicense
 
     New-Item -ItemType Directory -Path $outputFullPath -Force | Out-Null
     $builtExecutable = Join-Path $repositoryRoot 'installer\BD2PTBR.Installer\bin\Release\net472\BD2PTBR-Installer.exe'
-    $releaseExecutable = Join-Path $outputFullPath "BD2PTBR-Installer-v$Version.exe"
+    $releaseExecutable = Join-Path $outputFullPath "BD2PTBRv$Version.exe"
     $releaseChecksum = "$releaseExecutable.sha256"
-    $releaseManifest = Join-Path $outputFullPath "BD2PTBR-Installer-v$Version-manifest.json"
+    $releaseManifest = Join-Path $outputFullPath "BD2PTBRv$Version-manifest.json"
     Copy-Item -LiteralPath $builtExecutable -Destination $releaseExecutable -Force
 
     $executableHash = (Get-FileHash -LiteralPath $releaseExecutable -Algorithm SHA256).Hash
