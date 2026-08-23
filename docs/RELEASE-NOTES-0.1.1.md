@@ -17,6 +17,12 @@ Baixe somente:
 BD2PTBRv0.1.1.exe
 ```
 
+SHA-256:
+
+```text
+E2BF5CABF365BF1D5DCB40CE485B7EF25F6623ED23D207AAA3020BF68DC599DA
+```
+
 O arquivo `.sha256` permite conferir a integridade do executável. O manifesto JSON registra versões, métricas, dependências e o hash do pacote interno.
 
 ## Instalação
@@ -71,4 +77,4 @@ Esta é uma tradução beta de cobertura ampla, não uma revisão integral frase
 
 ## Autoria e transparência
 
-O projeto é criado, dirigido, testado e publicado por Kacks. O OpenAI Codex foi utilizado como ferramenta auxiliar na tradução em escala, na engenharia, nas auditorias, no instalador e na documentação. Consulte [Autoria e ferramentas](./AUTORIA-E-FERRAMENTAS.md) para a atribuição completa.
+O projeto é criado, dirigido, testado e publicado por Kacks. O OpenAI Codex foi utilizado como ferramenta auxiliar na tradução em escala, na engenharia, nas auditorias, no instalador e na documentação. Consulte [Autoria e ferramentas](https://github.com/kacksdev/browndust2-ptbr/blob/main/docs/AUTORIA-E-FERRAMENTAS.md) para a atribuição completa.
