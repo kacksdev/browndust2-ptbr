@@ -8,7 +8,7 @@ body:
     id: versions
     attributes:
       label: Versões
-      placeholder: Mod 0.1.0 beta / Cliente 2.32.7 / Windows 11
+      placeholder: Mod 0.1.1 beta / Cliente 2.32.10 / Windows 11
     validations:
       required: true
   - type: dropdown
@@ -41,7 +41,7 @@ body:
     attributes:
       label: Verificações
       options:
-        - label: Baixei o pacote pela seção Releases e extraí o ZIP antes de executar.
+        - label: Baixei o instalador EXE pela seção Releases e não usei pacotes antigos.
           required: true
         - label: Fechei o jogo antes de instalar ou remover.
           required: true

@@ -1,0 +1,59 @@
+<Application x:Class="BD2PTBR.Installer.App"
+             xmlns="http://schemas.microsoft.com/winfx/2006/xaml/presentation"
+             xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
+             ShutdownMode="OnExplicitShutdown">
+  <Application.Resources>
+    <SolidColorBrush x:Key="Ink" Color="#F2F2F2" />
+    <SolidColorBrush x:Key="MutedInk" Color="#B9BDC3" />
+    <SolidColorBrush x:Key="Graphite" Color="#14171B" />
+    <SolidColorBrush x:Key="Panel" Color="#E616181C" />
+    <SolidColorBrush x:Key="PanelSoft" Color="#C91C2025" />
+    <SolidColorBrush x:Key="Line" Color="#6DFFFFFF" />
+
+    <Style TargetType="Button">
+      <Setter Property="Foreground" Value="{StaticResource Ink}" />
+      <Setter Property="Background" Value="#D921252A" />
+      <Setter Property="BorderBrush" Value="#82FFFFFF" />
+      <Setter Property="BorderThickness" Value="1" />
+      <Setter Property="Padding" Value="18,10" />
+      <Setter Property="FontWeight" Value="SemiBold" />
+      <Setter Property="Cursor" Value="Hand" />
+      <Setter Property="Template">
+        <Setter.Value>
+          <ControlTemplate TargetType="Button">
+            <Border x:Name="Border"
+                    CornerRadius="3"
+                    Background="{TemplateBinding Background}"
+                    BorderBrush="{TemplateBinding BorderBrush}"
+                    BorderThickness="{TemplateBinding BorderThickness}">
+              <ContentPresenter HorizontalAlignment="Center"
+                                VerticalAlignment="Center"
+                                Margin="{TemplateBinding Padding}" />
+            </Border>
+            <ControlTemplate.Triggers>
+              <Trigger Property="IsMouseOver" Value="True">
+                <Setter TargetName="Border" Property="Background" Value="#F0383D43" />
+                <Setter TargetName="Border" Property="BorderBrush" Value="#FFFFFFFF" />
+              </Trigger>
+              <Trigger Property="IsPressed" Value="True">
+                <Setter TargetName="Border" Property="Background" Value="#FF0C0E10" />
+              </Trigger>
+              <Trigger Property="IsEnabled" Value="False">
+                <Setter Property="Opacity" Value="0.42" />
+              </Trigger>
+            </ControlTemplate.Triggers>
+          </ControlTemplate>
+        </Setter.Value>
+      </Setter>
+    </Style>
+
+    <Style TargetType="TextBox">
+      <Setter Property="Foreground" Value="{StaticResource Ink}" />
+      <Setter Property="Background" Value="#D90D0F12" />
+      <Setter Property="BorderBrush" Value="#65FFFFFF" />
+      <Setter Property="BorderThickness" Value="1" />
+      <Setter Property="Padding" Value="11,8" />
+      <Setter Property="CaretBrush" Value="White" />
+    </Style>
+  </Application.Resources>
+</Application>

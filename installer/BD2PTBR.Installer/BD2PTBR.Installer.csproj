@@ -1,0 +1,42 @@
+<Project Sdk="Microsoft.NET.Sdk.WindowsDesktop">
+  <PropertyGroup>
+    <OutputType>WinExe</OutputType>
+    <TargetFramework>net472</TargetFramework>
+    <UseWPF>true</UseWPF>
+    <AssemblyName>BD2PTBR-Installer</AssemblyName>
+    <RootNamespace>BD2PTBR.Installer</RootNamespace>
+    <ApplicationManifest>app.manifest</ApplicationManifest>
+    <Version>0.1.1</Version>
+    <FileVersion>0.1.1.0</FileVersion>
+    <AssemblyVersion>0.1.1.0</AssemblyVersion>
+    <Deterministic>true</Deterministic>
+    <LangVersion>latest</LangVersion>
+    <Nullable>disable</Nullable>
+    <PlatformTarget>x64</PlatformTarget>
+    <Prefer32Bit>false</Prefer32Bit>
+  </PropertyGroup>
+
+  <ItemGroup>
+    <Reference Include="System.IO.Compression" />
+    <Reference Include="System.IO.Compression.FileSystem" />
+    <Reference Include="System.Runtime.Serialization" />
+    <Reference Include="System.Windows.Forms" />
+  </ItemGroup>
+
+  <ItemGroup>
+    <Resource Include="Assets\installer-background.png" />
+    <Resource Include="Assets\installer.ico" Condition="Exists('Assets\installer.ico')" />
+    <EmbeddedResource Include="Payload\BD2PTBR-payload.zip"
+                      LogicalName="BD2PTBR.Payload.zip"
+                      Condition="Exists('Payload\BD2PTBR-payload.zip')" />
+    <EmbeddedResource Include="Assets\THIRD-PARTY-NOTICES.txt"
+                      LogicalName="BD2PTBR.ThirdPartyNotices.txt"
+                      Condition="Exists('Assets\THIRD-PARTY-NOTICES.txt')" />
+  </ItemGroup>
+
+  <ItemGroup>
+    <PackageReference Include="Microsoft.NETFramework.ReferenceAssemblies.net472"
+                      Version="1.0.3"
+                      PrivateAssets="all" />
+  </ItemGroup>
+</Project>

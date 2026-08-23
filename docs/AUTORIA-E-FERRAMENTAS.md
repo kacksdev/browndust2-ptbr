@@ -19,13 +19,14 @@ O **OpenAI Codex** é uma ferramenta auxiliar integrada ao fluxo. Ele foi utiliz
 - produzir as traduções PT-BR das entradas do catálogo em grande escala;
 - aplicar correções orientadas pelos requisitos do projeto;
 - apoiar o desenvolvimento e a depuração do plugin;
-- automatizar consolidação, auditoria, compilação e empacotamento;
+- apoiar o desenvolvimento e a depuração do instalador gráfico;
+- automatizar consolidação, auditoria, compilação, empacotamento e testes;
 - auxiliar na análise de logs, capturas e falhas relatadas;
 - acelerar a documentação técnica.
 
 O Codex não determina sozinho o escopo, a qualidade aceitável, a compatibilidade ou a publicação. Essas decisões permanecem comigo.
 
-## Estado editorial da versão 0.1.0 beta
+## Estado editorial da versão 0.1.1 beta
 
 | Classificação interna | Entradas |
 | --- | ---: |
@@ -46,6 +47,7 @@ O Codex não determina sozinho o escopo, a qualidade aceitável, a compatibilida
 2. Registro o comportamento e defino a prioridade.
 3. O Codex auxilia na investigação, nas alterações em escala e nas verificações técnicas.
 4. Reinstalo e executo o pacote resultante no jogo.
-5. A correção só é incorporada quando o resultado atende ao critério definido para a versão.
+5. Valido instalação, reparo, atualização, remoção e restauração sobre um cliente controlado.
+6. A correção só é incorporada quando o resultado atende ao critério definido para a versão.
 
 Essa atribuição registra o uso da ferramenta sem transferir a ela a autoria ou a direção do projeto.

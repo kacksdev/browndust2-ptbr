@@ -64,7 +64,7 @@ internal static class LocalizationCacheDumper
 		}
 	}
 
-	// Campos dos caches de idioma observados no cliente compatível. A coleta só roda
+	// Campos dos caches de localização do cliente 2.31.8. A coleta só roda
 	// quando o modo de diagnóstico é ativado e serve para descobrir entradas
 	// adicionadas pelo jogo sem percorrer ou alterar componentes visuais.
 	private static readonly CacheDescriptor[] Caches =
@@ -263,7 +263,7 @@ internal static class LocalizationCacheDumper
 		}
 		catch (Exception ex)
 		{
-			logger?.LogWarning("Falha ao extrair a próxima tabela bruta de idioma: " +
+			logger?.LogWarning("Falha ao extrair a próxima tabela bruta de localização: " +
 				(ex.InnerException?.Message ?? ex.Message));
 			return 0;
 		}

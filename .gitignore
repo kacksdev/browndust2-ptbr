@@ -9,6 +9,7 @@
 # Artefatos locais
 dist/
 work/
+installer/BD2PTBR.Installer/Payload/
 *.log
 *.tmp
 

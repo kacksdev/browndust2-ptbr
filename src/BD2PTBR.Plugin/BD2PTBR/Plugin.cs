@@ -7,14 +7,14 @@ using UnityEngine;
 
 namespace BD2PTBR;
 
-[BepInPlugin("br.com.bd2ptbr.translation", "Brown Dust 2 PT-BR", "0.1.0")]
+[BepInPlugin("br.com.bd2ptbr.translation", "Brown Dust 2 PT-BR", "0.1.1")]
 public sealed class Plugin : BaseUnityPlugin
 {
 	public const string PluginGuid = "br.com.bd2ptbr.translation";
 
 	public const string PluginName = "Brown Dust 2 PT-BR";
 
-	public const string PluginVersion = "0.1.0";
+	public const string PluginVersion = "0.1.1";
 
 	private const int ExpectedCompleteCatalogEntries = 223743;
 

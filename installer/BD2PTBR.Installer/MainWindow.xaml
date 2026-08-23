@@ -1,0 +1,184 @@
+<Window x:Class="BD2PTBR.Installer.MainWindow"
+        xmlns="http://schemas.microsoft.com/winfx/2006/xaml/presentation"
+        xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
+        Title="Brown Dust 2 PT-BR"
+        WindowStyle="None"
+        ResizeMode="CanResizeWithGrip"
+        WindowStartupLocation="CenterScreen"
+        Background="#FF080A0D"
+        Foreground="{StaticResource Ink}"
+        FontFamily="Segoe UI"
+        SnapsToDevicePixels="True">
+  <Border BorderBrush="#A8FFFFFF" BorderThickness="1">
+    <Viewbox Stretch="Uniform">
+      <Grid Width="1280" Height="720">
+        <Image Source="/BD2PTBR-Installer;component/Assets/installer-background.png"
+               Stretch="UniformToFill" />
+
+        <Rectangle>
+          <Rectangle.Fill>
+            <LinearGradientBrush StartPoint="0,0" EndPoint="1,0">
+              <GradientStop Color="#F3080A0D" Offset="0" />
+              <GradientStop Color="#E80A0C0F" Offset="0.36" />
+              <GradientStop Color="#8F0A0C0F" Offset="0.62" />
+              <GradientStop Color="#300A0C0F" Offset="1" />
+            </LinearGradientBrush>
+          </Rectangle.Fill>
+        </Rectangle>
+        <Rectangle>
+          <Rectangle.Fill>
+            <LinearGradientBrush StartPoint="0,0" EndPoint="0,1">
+              <GradientStop Color="#8C050608" Offset="0" />
+              <GradientStop Color="#14050608" Offset="0.38" />
+              <GradientStop Color="#B8050608" Offset="1" />
+            </LinearGradientBrush>
+          </Rectangle.Fill>
+        </Rectangle>
+
+        <Grid Margin="34,24,34,26">
+          <Grid.RowDefinitions>
+            <RowDefinition Height="42" />
+            <RowDefinition Height="*" />
+            <RowDefinition Height="38" />
+          </Grid.RowDefinitions>
+
+          <Grid Grid.Row="0" Background="Transparent" MouseLeftButtonDown="Header_OnMouseLeftButtonDown">
+            <Grid.ColumnDefinitions>
+              <ColumnDefinition Width="*" />
+              <ColumnDefinition Width="Auto" />
+            </Grid.ColumnDefinitions>
+            <StackPanel Orientation="Horizontal" VerticalAlignment="Center">
+              <TextBlock Text="BD2 / PT-BR" FontWeight="Bold" FontSize="14" />
+              <Border Width="1" Height="18" Background="#8AFFFFFF" Margin="15,0" />
+              <TextBlock Text="INSTALADOR OFICIAL DO PROJETO" Foreground="{StaticResource MutedInk}" FontSize="12" />
+            </StackPanel>
+            <StackPanel Grid.Column="1" Orientation="Horizontal">
+              <Button Width="40" Height="30" Padding="0" Margin="0,0,7,0" Content="_" Click="Minimize_OnClick" ToolTip="Minimizar" />
+              <Button Width="40" Height="30" Padding="0" Content="×" FontSize="18" Click="Close_OnClick" ToolTip="Fechar" />
+            </StackPanel>
+          </Grid>
+
+          <Grid Grid.Row="1" Margin="0,17,0,8">
+            <Grid.ColumnDefinitions>
+              <ColumnDefinition Width="590" />
+              <ColumnDefinition Width="*" />
+            </Grid.ColumnDefinitions>
+
+            <Border Grid.Column="0" Background="{StaticResource Panel}" BorderBrush="#7FFFFFFF" BorderThickness="1" CornerRadius="4" Padding="30,25">
+              <Grid>
+                <Grid.RowDefinitions>
+                  <RowDefinition Height="Auto" />
+                  <RowDefinition Height="Auto" />
+                  <RowDefinition Height="Auto" />
+                  <RowDefinition Height="Auto" />
+                  <RowDefinition Height="Auto" />
+                  <RowDefinition Height="Auto" />
+                  <RowDefinition Height="Auto" />
+                  <RowDefinition Height="*" />
+                </Grid.RowDefinitions>
+
+                <TextBlock Grid.Row="0" Text="BROWN DUST 2 PT-BR" FontSize="32" FontWeight="Bold" />
+                <TextBlock Grid.Row="1" Text="Tradução comunitária para PC" FontSize="15" Foreground="{StaticResource MutedInk}" Margin="0,4,0,19" />
+
+                <Border Grid.Row="2" Background="#D0111418" BorderBrush="#75FFFFFF" BorderThickness="1" CornerRadius="3" Padding="14,11" Margin="0,0,0,14">
+                  <Grid>
+                    <Grid.ColumnDefinitions>
+                      <ColumnDefinition Width="Auto" />
+                      <ColumnDefinition Width="*" />
+                    </Grid.ColumnDefinitions>
+                    <Ellipse x:Name="StatusDot" Width="10" Height="10" Fill="#FFE3E5E8" VerticalAlignment="Top" Margin="0,5,12,0" />
+                    <StackPanel Grid.Column="1">
+                      <TextBlock x:Name="StatusTitle" Text="LOCALIZANDO O JOGO" FontSize="13" FontWeight="Bold" />
+                      <TextBlock x:Name="StatusMessage" Text="Aguarde enquanto o cliente é identificado." Foreground="{StaticResource MutedInk}" FontSize="12" TextWrapping="Wrap" Margin="0,3,0,0" />
+                    </StackPanel>
+                  </Grid>
+                </Border>
+
+                <Grid Grid.Row="3" Margin="0,0,0,11">
+                  <Grid.ColumnDefinitions>
+                    <ColumnDefinition Width="*" />
+                    <ColumnDefinition Width="Auto" />
+                  </Grid.ColumnDefinitions>
+                  <TextBox x:Name="GamePathBox" IsReadOnly="True" FontSize="12" VerticalContentAlignment="Center" />
+                  <Button x:Name="BrowseButton" Grid.Column="1" Content="ESCOLHER PASTA" Margin="9,0,0,0" Padding="13,8" Click="Browse_OnClick" />
+                </Grid>
+
+                <Grid Grid.Row="4" Margin="0,0,0,14">
+                  <Grid.ColumnDefinitions>
+                    <ColumnDefinition Width="*" />
+                    <ColumnDefinition Width="*" />
+                    <ColumnDefinition Width="*" />
+                  </Grid.ColumnDefinitions>
+                  <StackPanel Grid.Column="0">
+                    <TextBlock Text="MOD" Foreground="{StaticResource MutedInk}" FontSize="10" />
+                    <TextBlock x:Name="ModVersionText" Text="0.1.1" FontWeight="SemiBold" FontSize="13" />
+                  </StackPanel>
+                  <StackPanel Grid.Column="1">
+                    <TextBlock Text="CLIENTE TESTADO" Foreground="{StaticResource MutedInk}" FontSize="10" />
+                    <TextBlock x:Name="ClientVersionText" Text="2.32.10" FontWeight="SemiBold" FontSize="13" />
+                  </StackPanel>
+                  <StackPanel Grid.Column="2">
+                    <TextBlock Text="PACOTE ENCONTRADO" Foreground="{StaticResource MutedInk}" FontSize="10" />
+                    <TextBlock x:Name="PackageText" Text="verificando" FontWeight="SemiBold" FontSize="13" />
+                  </StackPanel>
+                </Grid>
+
+                <StackPanel Grid.Row="5" Margin="0,0,0,13">
+                  <Grid>
+                    <TextBlock x:Name="ProgressPhase" Text="PRONTO" FontSize="11" FontWeight="Bold" HorizontalAlignment="Left" />
+                    <TextBlock x:Name="ProgressPercent" Text="0%" FontSize="11" FontWeight="Bold" HorizontalAlignment="Right" />
+                  </Grid>
+                  <ProgressBar x:Name="InstallProgress" Height="8" Minimum="0" Maximum="100" Value="0" Margin="0,7,0,0" Foreground="#FFF2F2F2" Background="#FF30343A" BorderThickness="0" />
+                </StackPanel>
+
+                <Grid Grid.Row="6" Margin="0,0,0,14">
+                  <Grid.ColumnDefinitions>
+                    <ColumnDefinition Width="2*" />
+                    <ColumnDefinition Width="*" />
+                    <ColumnDefinition Width="*" />
+                  </Grid.ColumnDefinitions>
+                  <Button x:Name="PrimaryButton" Grid.Column="0" Content="INSTALAR" Height="48" FontSize="14" Background="#F13C4249" Click="PrimaryAction_OnClick" />
+                  <Button x:Name="VerifyButton" Grid.Column="1" Content="VERIFICAR" Height="48" Margin="10,0,0,0" Padding="7" Click="Verify_OnClick" />
+                  <Button x:Name="RemoveButton" Grid.Column="2" Content="REMOVER" Height="48" Margin="10,0,0,0" Padding="7" Click="Remove_OnClick" />
+                </Grid>
+
+                <Expander x:Name="DetailsExpander" Grid.Row="7" Header="DETALHES DA OPERAÇÃO" Foreground="{StaticResource Ink}" IsExpanded="False">
+                  <Border Background="#E90B0D10" BorderBrush="#56FFFFFF" BorderThickness="1" Margin="0,8,0,0" Padding="10">
+                    <ScrollViewer x:Name="LogScroller" Height="94" VerticalScrollBarVisibility="Auto">
+                      <TextBlock x:Name="LogText" FontFamily="Consolas" FontSize="10.5" Foreground="#FFD7DADF" TextWrapping="Wrap" />
+                    </ScrollViewer>
+                  </Border>
+                </Expander>
+              </Grid>
+            </Border>
+
+            <Border Grid.Column="1" Margin="23,0,0,0" VerticalAlignment="Bottom" HorizontalAlignment="Right" Background="#C90B0D10" BorderBrush="#55FFFFFF" BorderThickness="1" CornerRadius="3" Padding="18,15" Width="344">
+              <StackPanel>
+                <TextBlock Text="INSTALAÇÃO SEGURA" FontSize="13" FontWeight="Bold" />
+                <TextBlock Text="O instalador detecta o cliente, cria um ponto de restauração, aplica somente os arquivos declarados e verifica tudo por SHA-256. Se uma etapa falhar, o estado anterior é restaurado automaticamente."
+                           Foreground="#FFD0D3D7" FontSize="11.5" TextWrapping="Wrap" LineHeight="17" Margin="0,7,0,0" />
+                <TextBlock x:Name="CompletionHint" Text="Feche o jogo antes de instalar, reparar ou remover." Foreground="#FFAEB3B9" FontSize="10.5" TextWrapping="Wrap" Margin="0,10,0,0" />
+              </StackPanel>
+            </Border>
+          </Grid>
+
+          <Grid Grid.Row="2">
+            <Grid.ColumnDefinitions>
+              <ColumnDefinition Width="*" />
+              <ColumnDefinition Width="Auto" />
+            </Grid.ColumnDefinitions>
+            <StackPanel Orientation="Horizontal" VerticalAlignment="Center">
+              <TextBlock Text="KACKS / COMMUNITY TRANSLATION / BRASIL" FontSize="10" FontWeight="SemiBold" Foreground="#FFD0D3D7" />
+              <TextBlock Text="   |   " Foreground="#70FFFFFF" />
+              <TextBlock Text="Projeto gratuito e independente" FontSize="10" Foreground="#FFAEB3B9" />
+            </StackPanel>
+            <StackPanel Grid.Column="1" Orientation="Horizontal" VerticalAlignment="Center">
+              <TextBlock Text="GITHUB" FontSize="10" FontWeight="Bold" Cursor="Hand" Margin="0,0,18,0" MouseLeftButtonUp="GitHub_OnClick" />
+              <TextBlock Text="GAMEBANANA" FontSize="10" FontWeight="Bold" Cursor="Hand" MouseLeftButtonUp="GameBanana_OnClick" />
+            </StackPanel>
+          </Grid>
+        </Grid>
+      </Grid>
+    </Viewbox>
+  </Border>
+</Window>

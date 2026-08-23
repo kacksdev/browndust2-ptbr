@@ -6,7 +6,8 @@ O projeto não atribui porcentagem de qualidade sem evidência. Cada marco avan�
 
 **Estado: atual**
 
-- Manter instalação, backup, remoção e atualização simples.
+- Manter o instalador gráfico único, a verificação, o backup, o rollback, a remoção e a atualização simples.
+- Repetir a matriz automatizada e o teste de cliente limpo antes de cada distribuição.
 - Cobrir textos novos trazidos pelo cliente.
 - Corrigir travamentos, quebras de interface e regressões com prioridade máxima.
 - Incorporar correções contextuais confirmadas durante o uso.

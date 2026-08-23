@@ -199,7 +199,7 @@ internal static class LocalizationPatcher
 		}
 		if (num > 0)
 		{
-			_logger?.LogInfo("Central de tradução identificada estruturalmente: " + _resolvedLocalizationTypeName + " (" + num + " métodos).");
+			_logger?.LogInfo("Central de localização identificada estruturalmente: " + _resolvedLocalizationTypeName + " (" + num + " métodos).");
 		}
 		return num;
 	}
@@ -323,7 +323,7 @@ internal static class LocalizationPatcher
 	{
 		if (Interlocked.Exchange(ref _hookEntered, 1) == 0 && _logger != null)
 		{
-			_logger.LogInfo("[PTBR-RUNTIME] getter central de tradução atingido: " + ((__originalMethod == null) ? "desconhecido" : __originalMethod.Name) + ".");
+			_logger.LogInfo("[PTBR-RUNTIME] getter central de localização atingido: " + ((__originalMethod == null) ? "desconhecido" : __originalMethod.Name) + ".");
 		}
 		if (_catalog == null || __originalMethod == null || __args == null || __args.Length == 0 || string.IsNullOrEmpty(__result))
 		{
