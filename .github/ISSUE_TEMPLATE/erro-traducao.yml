@@ -9,7 +9,7 @@ body:
     attributes:
       label: Versões
       description: Informe a versão do mod e a versão exibida pelo cliente.
-      placeholder: Mod 0.1.1 beta / Cliente 2.32.10
+      placeholder: "Mod: versão exibida / Cliente: versão instalada"
     validations:
       required: true
   - type: input
