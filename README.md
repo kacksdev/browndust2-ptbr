@@ -84,7 +84,7 @@ Capturas reais com a tradução ativa. Elas ilustram o projeto e não certificam
 
 ## 07 / CÓDIGO E TRANSPARÊNCIA
 
-O repositório reúne o código do plugin e do atualizador, o catálogo publicado, as ferramentas e a documentação. A extração incremental identifica entradas novas e originais alterados por chave e hash, preservando traduções não afetadas. O lote incremental desta migração foi traduzido diretamente pelo OpenAI Codex, a pedido do proprietário, a partir dos originais; não é uma tradução produzida pelo Gacha PT-BR Studio. Os originais do Studio, a memória de tradução e o glossário foram preservados.
+O repositório reúne o código do plugin e do atualizador, o catálogo publicado, as ferramentas e a documentação. A extração incremental identifica entradas novas e originais alterados por chave e hash, preservando traduções não afetadas.
 
 O OpenAI Codex também auxilia na engenharia, automação, testes e documentação. Tradução direta por IA e verificações estruturais não equivalem a revisão humana integral. As decisões editoriais, os critérios de qualidade, a validação e a publicação permanecem sob responsabilidade do mantenedor. Consulte [Autoria e ferramentas](./docs/AUTORIA-E-FERRAMENTAS.md).
 
