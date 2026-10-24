@@ -1,0 +1,35 @@
+{
+  "schemaVersion": 1,
+  "releases": [
+    {
+      "modVersion": "0.2.0",
+      "minimumLauncherVersion": "0.2.0",
+      "url": "https://github.com/kacksdev/browndust2-ptbr/releases/download/v0.2.0/BD2PTBR-payload-0.2.0.zip",
+      "bytes": 25157669,
+      "sha256": "2B462B3FF5C9EAED07BF75FE1D0EAF739D187B02B278DAC9679153D2B1D51A7D",
+      "compatibleClients": [
+        {
+          "package": "20261023000",
+          "version": "2.37.13",
+          "files": [
+            {
+              "path": "BrownDust II.exe",
+              "bytes": 677512,
+              "sha256": "B1EC590CB525ADADFFF764EE10F2E72173BEBC3EACE3E8306EAC5357CB2C167F"
+            },
+            {
+              "path": "BrownDust II_Data/Managed/Assembly-CSharp.dll",
+              "bytes": 51941376,
+              "sha256": "B6A58CD7188F348043182411772C545761B40499DDEBE6793B4F25E66C68D33E"
+            },
+            {
+              "path": "BrownDust II_Data/globalgamemanagers",
+              "bytes": 1198396,
+              "sha256": "A68AE91EF63834B390C7F500D6E760FB4CF5D765D77BF3957392217E72FF442E"
+            }
+          ]
+        }
+      ]
+    }
+  ]
+}
