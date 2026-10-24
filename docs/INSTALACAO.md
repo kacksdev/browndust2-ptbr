@@ -7,7 +7,7 @@
 3. Na primeira instalação, baixe **BD2PTBR.exe** pela [Release oficial](https://github.com/kacksdev/browndust2-ptbr/releases/latest) e confira o SHA-256 publicado.
 4. Abra o aplicativo e confirme a pasta detectada ou clique em **Escolher pasta**.
 5. Use **Buscar atualização**. O aplicativo consulta o canal oficial e procura um pacote compatível com o cliente instalado.
-6. Quando o pacote aparecer, clique em **Instalar** ou **Reparar / Reinstalar**, conforme a opção exibida, e confirme o download e a aplicação.
+6. Quando o pacote aparecer, clique em **Instalar**, **Atualizar** ou **Reparar / Reinstalar**, conforme a opção exibida, e confirme o download e a aplicação.
 7. Aguarde a confirmação de conclusão e abra o jogo normalmente pelo launcher oficial.
 
 É necessária conexão com a internet para consultar o canal e baixar os pacotes por HTTPS do GitHub. A consulta não inicia o download sem sua confirmação. Não é necessário extrair o pacote nem abrir um terminal. Se o Windows bloquear a gravação na pasta do jogo, o aplicativo informará a necessidade de executá-lo como administrador; ele não solicita elevação automaticamente.
@@ -29,7 +29,7 @@ O caminho mais comum termina em `BrownDust2_10000002`. Não selecione a pasta `B
 ## Ações disponíveis
 
 - **Buscar atualização**: consulta o [canal estável](https://raw.githubusercontent.com/kacksdev/browndust2-ptbr/main/updates/stable.json) e seleciona um pacote compatível; não instala por conta própria.
-- **Instalar**: baixa e aplica o pacote apresentado após sua confirmação.
+- **Instalar / Atualizar**: baixa e aplica o pacote compatível apresentado após sua confirmação.
 - **Reparar / Reinstalar**: reaplica a versão compatível já instalada, quando disponível no canal.
 - **Verificar**: compara os arquivos gerenciados da instalação com os hashes registrados. Essa verificação de integridade não certifica, sozinha, compatibilidade com um cliente novo.
 - **Remover**: retira os componentes pertencentes ao projeto e restaura os arquivos anteriores preservados pelo aplicativo.

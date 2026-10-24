@@ -34,7 +34,7 @@ Essa verificação não promete compatibilidade com qualquer versão futura do j
 1. Atualize Brown Dust 2 pelo Starter oficial e feche o jogo e o launcher.
 2. Na primeira instalação, baixe **BD2PTBR.exe**, indicado na [Release atual](https://github.com/kacksdev/browndust2-ptbr/releases/latest).
 3. Abra o aplicativo e confirme a pasta que contém `BrownDust II.exe`.
-4. Use **Buscar atualização**, selecione **Instalar** ou **Reparar / Reinstalar** quando o pacote compatível aparecer e confirme a operação.
+4. Use **Buscar atualização**, selecione **Instalar**, **Atualizar** ou **Reparar / Reinstalar** quando o pacote compatível aparecer e confirme a operação.
 5. Aguarde a confirmação da operação e abra o jogo normalmente pelo launcher oficial.
 
 Nas próximas atualizações do mod, abra o mesmo aplicativo e use **Buscar atualização**. Não é necessário baixar outro instalador para cada atualização do catálogo. Uma mudança de segurança ou de protocolo do próprio aplicativo poderá exigir uma migração, informada pelo projeto.
