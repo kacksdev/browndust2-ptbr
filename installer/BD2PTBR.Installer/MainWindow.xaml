@@ -51,7 +51,7 @@
             <StackPanel Orientation="Horizontal" VerticalAlignment="Center">
               <TextBlock Text="BD2 / PT-BR" FontWeight="Bold" FontSize="14" />
               <Border Width="1" Height="18" Background="#8AFFFFFF" Margin="15,0" />
-              <TextBlock Text="INSTALADOR OFICIAL DO PROJETO" Foreground="{StaticResource MutedInk}" FontSize="12" />
+              <TextBlock Text="ATUALIZADOR DO PROJETO" Foreground="{StaticResource MutedInk}" FontSize="12" />
             </StackPanel>
             <StackPanel Grid.Column="1" Orientation="Horizontal">
               <Button Width="40" Height="30" Padding="0" Margin="0,0,7,0" Content="_" Click="Minimize_OnClick" ToolTip="Minimizar" />
@@ -112,11 +112,11 @@
                   </Grid.ColumnDefinitions>
                   <StackPanel Grid.Column="0">
                     <TextBlock Text="MOD" Foreground="{StaticResource MutedInk}" FontSize="10" />
-                    <TextBlock x:Name="ModVersionText" Text="0.1.1" FontWeight="SemiBold" FontSize="13" />
+                    <TextBlock x:Name="ModVersionText" Text="verificando" FontWeight="SemiBold" FontSize="13" />
                   </StackPanel>
                   <StackPanel Grid.Column="1">
-                    <TextBlock Text="CLIENTE TESTADO" Foreground="{StaticResource MutedInk}" FontSize="10" />
-                    <TextBlock x:Name="ClientVersionText" Text="2.32.10" FontWeight="SemiBold" FontSize="13" />
+                    <TextBlock Text="CLIENTE INSTALADO" Foreground="{StaticResource MutedInk}" FontSize="10" />
+                    <TextBlock x:Name="ClientVersionText" Text="verificando" FontWeight="SemiBold" FontSize="13" />
                   </StackPanel>
                   <StackPanel Grid.Column="2">
                     <TextBlock Text="PACOTE ENCONTRADO" Foreground="{StaticResource MutedInk}" FontSize="10" />
@@ -138,7 +138,7 @@
                     <ColumnDefinition Width="*" />
                     <ColumnDefinition Width="*" />
                   </Grid.ColumnDefinitions>
-                  <Button x:Name="PrimaryButton" Grid.Column="0" Content="INSTALAR" Height="48" FontSize="14" Background="#F13C4249" Click="PrimaryAction_OnClick" />
+                  <Button x:Name="PrimaryButton" Grid.Column="0" Content="INSTALAR TRADUÇÃO" Height="48" FontSize="12" Background="#F13C4249" Click="PrimaryAction_OnClick" IsEnabled="False" ToolTipService.ShowOnDisabled="True" />
                   <Button x:Name="VerifyButton" Grid.Column="1" Content="VERIFICAR" Height="48" Margin="10,0,0,0" Padding="7" Click="Verify_OnClick" />
                   <Button x:Name="RemoveButton" Grid.Column="2" Content="REMOVER" Height="48" Margin="10,0,0,0" Padding="7" Click="Remove_OnClick" />
                 </Grid>
@@ -159,6 +159,10 @@
                 <TextBlock Text="O instalador detecta o cliente, cria um ponto de restauração, aplica somente os arquivos declarados e verifica tudo por SHA-256. Se uma etapa falhar, o estado anterior é restaurado automaticamente."
                            Foreground="#FFD0D3D7" FontSize="11.5" TextWrapping="Wrap" LineHeight="17" Margin="0,7,0,0" />
                 <TextBlock x:Name="CompletionHint" Text="Feche o jogo antes de instalar, reparar ou remover." Foreground="#FFAEB3B9" FontSize="10.5" TextWrapping="Wrap" Margin="0,10,0,0" />
+                <Button x:Name="CheckUpdatesButton" Content="BUSCAR ATUALIZAÇÃO" Margin="0,14,0,0" Click="CheckUpdates_OnClick" />
+                <Button x:Name="RestoreButton" Content="RESTAURAR VERSÃO ANTERIOR" Margin="0,8,0,0" Click="Restore_OnClick" IsEnabled="False" />
+                <Button x:Name="StarterButton" Content="ABRIR STARTER OFICIAL" Margin="0,8,0,0" Click="Starter_OnClick"
+                        ToolTip="Abre o atualizador oficial do jogo. Não instala nem atualiza o mod." />
               </StackPanel>
             </Border>
           </Grid>

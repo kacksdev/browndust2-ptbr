@@ -7,9 +7,9 @@
     <ApplicationIcon>Assets\kacks-installer.ico</ApplicationIcon>
     <RootNamespace>BD2PTBR.Installer</RootNamespace>
     <ApplicationManifest>app.manifest</ApplicationManifest>
-    <Version>0.1.1</Version>
-    <FileVersion>0.1.1.0</FileVersion>
-    <AssemblyVersion>0.1.1.0</AssemblyVersion>
+    <Version>0.2.0</Version>
+    <FileVersion>0.2.0.0</FileVersion>
+    <AssemblyVersion>0.2.0.0</AssemblyVersion>
     <Deterministic>true</Deterministic>
     <LangVersion>latest</LangVersion>
     <Nullable>disable</Nullable>
@@ -21,6 +21,7 @@
     <Reference Include="System.IO.Compression" />
     <Reference Include="System.IO.Compression.FileSystem" />
     <Reference Include="System.Runtime.Serialization" />
+    <Reference Include="System.Net.Http" />
     <Reference Include="System.Windows.Forms" />
   </ItemGroup>
 
@@ -29,7 +30,7 @@
     <Resource Include="Assets\kacks-installer.ico" />
     <EmbeddedResource Include="Payload\BD2PTBR-payload.zip"
                       LogicalName="BD2PTBR.Payload.zip"
-                      Condition="Exists('Payload\BD2PTBR-payload.zip')" />
+                      Condition="'$(IncludeEmbeddedPayload)' == 'true' And Exists('Payload\BD2PTBR-payload.zip')" />
     <EmbeddedResource Include="Assets\THIRD-PARTY-NOTICES.txt"
                       LogicalName="BD2PTBR.ThirdPartyNotices.txt"
                       Condition="Exists('Assets\THIRD-PARTY-NOTICES.txt')" />

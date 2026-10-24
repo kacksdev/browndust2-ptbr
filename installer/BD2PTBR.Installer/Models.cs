@@ -12,7 +12,8 @@ namespace BD2PTBR.Installer
         Install,
         Repair,
         Verify,
-        Uninstall
+        Uninstall,
+        Restore
     }
 
     public enum InstallationHealth
@@ -35,6 +36,9 @@ namespace BD2PTBR.Installer
         public int FaultAfterFileOperations { get; set; }
         public bool SkipProcessCheck { get; set; }
         public string StateRootOverride { get; set; }
+        public string PayloadPath { get; set; }
+        public string ExpectedPayloadSha256 { get; set; }
+        public string ExpectedModVersion { get; set; }
     }
 
     public sealed class InstallationInspection
@@ -45,6 +49,7 @@ namespace BD2PTBR.Installer
         public string ModVersion { get; set; }
         public InstallationHealth Health { get; set; }
         public string Summary { get; set; }
+        public bool CanRestore { get; set; }
         public List<string> Issues { get; set; } = new List<string>();
     }
 
@@ -88,6 +93,19 @@ namespace BD2PTBR.Installer
         public string testedGamePackage { get; set; }
         [DataMember(Name = "files")]
         public List<PayloadFile> files { get; set; }
+        [DataMember(Name = "compatibleClients")]
+        public List<ClientIdentity> compatibleClients { get; set; }
+    }
+
+    [DataContract]
+    internal sealed class ClientIdentity
+    {
+        [DataMember(Name = "package")]
+        public string package { get; set; }
+        [DataMember(Name = "version")]
+        public string version { get; set; }
+        [DataMember(Name = "files")]
+        public List<PayloadFile> files { get; set; }
     }
 
     [DataContract]
@@ -118,6 +136,8 @@ namespace BD2PTBR.Installer
         public bool loaderPreExisting { get; set; }
         [DataMember(Name = "files")]
         public List<InstalledFileState> files { get; set; } = new List<InstalledFileState>();
+        [DataMember(Name = "clientIdentity")]
+        public ClientIdentity clientIdentity { get; set; }
     }
 
     [DataContract]
@@ -131,6 +151,8 @@ namespace BD2PTBR.Installer
         public bool originalExisted { get; set; }
         [DataMember(Name = "originalBackupRelativePath")]
         public string originalBackupRelativePath { get; set; }
+        [DataMember(Name = "originalBackupSha256")]
+        public string originalBackupSha256 { get; set; }
     }
 
     [DataContract]
@@ -152,8 +174,12 @@ namespace BD2PTBR.Installer
         public bool stateExisted { get; set; }
         [DataMember(Name = "stateBackupPath")]
         public string stateBackupPath { get; set; }
+        [DataMember(Name = "stateBackupSha256")]
+        public string stateBackupSha256 { get; set; }
         [DataMember(Name = "files")]
         public List<TransactionFile> files { get; set; } = new List<TransactionFile>();
+        [DataMember(Name = "clientIdentity")]
+        public ClientIdentity clientIdentity { get; set; }
     }
 
     [DataContract]
@@ -165,6 +191,8 @@ namespace BD2PTBR.Installer
         public bool existed { get; set; }
         [DataMember(Name = "backupRelativePath")]
         public string backupRelativePath { get; set; }
+        [DataMember(Name = "backupSha256")]
+        public string backupSha256 { get; set; }
     }
 
     internal static class JsonStorage
@@ -208,7 +236,12 @@ namespace BD2PTBR.Installer
             }
             Directory.CreateDirectory(parent);
             var temporary = fullPath + ".tmp-" + Guid.NewGuid().ToString("N");
-            File.WriteAllText(temporary, Serialize(value), new UTF8Encoding(false));
+            var bytes = new UTF8Encoding(false).GetBytes(Serialize(value));
+            using (var stream = new FileStream(temporary, FileMode.CreateNew, FileAccess.Write, FileShare.None))
+            {
+                stream.Write(bytes, 0, bytes.Length);
+                stream.Flush(true);
+            }
             if (File.Exists(fullPath))
             {
                 try

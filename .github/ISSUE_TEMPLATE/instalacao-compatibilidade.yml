@@ -8,7 +8,7 @@ body:
     id: versions
     attributes:
       label: Versões
-      placeholder: Mod 0.1.1 beta / Cliente 2.32.10 / Windows 11
+      placeholder: "Mod: versão exibida / Cliente: versão instalada / Windows: versão instalada"
     validations:
       required: true
   - type: dropdown

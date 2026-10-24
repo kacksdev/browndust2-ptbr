@@ -2,18 +2,24 @@
 param(
     [Parameter(Mandatory = $true)]
     [string]$GameRoot,
-    [string]$Version = '0.1.1'
+    [string]$Version = '0.1.1',
+    [string]$CatalogRoot,
+    [ValidateRange(1, [int]::MaxValue)]
+    [int]$ExpectedCatalogEntries = 223743,
+    [ValidateRange(0, [int]::MaxValue)]
+    [int]$ExpectedProtectedMusicSources = 288,
+    [string]$ReferencePluginPath
 )
 
 $ErrorActionPreference = 'Stop'
 
 $resolvedGameRoot = (Resolve-Path -LiteralPath $GameRoot).Path
 $repositoryRoot = (Resolve-Path -LiteralPath (Join-Path $PSScriptRoot '..')).Path
-$sourceRoot = Join-Path $repositoryRoot 'catalog'
+$sourceRoot = if ($CatalogRoot) { (Resolve-Path -LiteralPath $CatalogRoot).Path } else { Join-Path $repositoryRoot 'work\release-catalog-v096' }
 $installedRoot = Join-Path $resolvedGameRoot 'BepInEx\plugins\BD2PTBR'
 $installedDll = Join-Path $installedRoot 'BD2PTBR.dll'
 $installedTranslations = Join-Path $installedRoot 'translations'
-$sourceDll = Join-Path $repositoryRoot 'src\BD2PTBR.Plugin\bin\Release\net472\BD2PTBR.dll'
+$sourceDll = if ($ReferencePluginPath) { (Resolve-Path -LiteralPath $ReferencePluginPath).Path } else { Join-Path $repositoryRoot 'src\BD2PTBR.Plugin\bin\Release\net472\BD2PTBR.dll' }
 
 if (-not (Test-Path -LiteralPath $installedDll -PathType Leaf)) {
     throw 'BD2PTBR.dll não foi encontrado na instalação do jogo.'
@@ -67,8 +73,8 @@ if (Test-Path -LiteralPath $logPath -PathType Leaf) {
     }
     $runtimeChecks = [ordered]@{
         logIsNewerThanPlugin = (Get-Item -LiteralPath $logPath).LastWriteTimeUtc -ge (Get-Item -LiteralPath $installedDll).LastWriteTimeUtc
-        catalogCount = $log.Contains('Traduções carregadas: 223743.')
-        musicTitlesProtected = $log.Contains('Títulos musicais protegidos: 288.')
+        catalogCount = $log.Contains("Traduções carregadas: $ExpectedCatalogEntries.")
+        musicTitlesProtected = $log.Contains("Títulos musicais protegidos: $ExpectedProtectedMusicSources.")
         awakeComplete = $log.Contains('[PTBR-CICLO] Awake concluído.')
         pluginEnabled = $log.Contains('[PTBR-CICLO] Plugin habilitado.')
         independentCoordinator = $log.Contains('[PTBR-RUNTIME] coordenador independente do ciclo do plugin ativo.')

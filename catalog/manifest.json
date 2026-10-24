@@ -1,0 +1,19 @@
+{
+  "schemaVersion": 1,
+  "modVersion": "0.2.0",
+  "expectedEffectiveEntries": 257678,
+  "protectedMusicKeys": 423,
+  "protectedMusicSources": 314,
+  "files": [
+    {
+      "file": "complete.jsonl",
+      "bytes": 92498960,
+      "sha256": "ad0df3ba9c8293326e59431a22f7740eb1058328a4c8349dd32899d6e9273997"
+    },
+    {
+      "file": "hardcoded.jsonl",
+      "bytes": 4333,
+      "sha256": "2b1a2f990d4e171fb54bc8d08ecdf71896f85af3e5abca480bbfce73a4446746"
+    }
+  ]
+}

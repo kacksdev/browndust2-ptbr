@@ -1,53 +1,21 @@
 # Autoria e ferramentas
 
-## Direção do projeto
+## Responsabilidade pelo projeto
 
-**Brown Dust 2 PT-BR é um projeto criado, dirigido, mantido e validado por mim, Kacks.** Permanecem sob minha responsabilidade:
+**Kacks** é o criador, proprietário e mantenedor do Brown Dust 2 PT-BR. A direção do projeto, as decisões editoriais, os critérios de qualidade, a aprovação dos testes no cliente e a publicação permanecem sob sua responsabilidade. O projeto é comunitário, gratuito e não oficial, sem afiliação, patrocínio ou endosso da NEOWIZ ou da GAMFS N.
 
-- escopo e padrão de qualidade;
-- decisões de tradução e preservação de termos;
-- priorização de conteúdo e correções;
-- identificação de problemas durante o uso real;
-- testes no cliente e aprovação dos resultados;
-- compatibilidade, empacotamento e publicação;
-- manutenção e direção futura.
+## Procedência da tradução incremental
 
-## Papel do OpenAI Codex
+Os lotes incrementais desta migração foram traduzidos diretamente pelo **OpenAI Codex**, a pedido do proprietário, a partir dos originais integrais. Traduções anteriores são reaproveitadas quando a correspondência de fonte e contexto é verificada. Essa atribuição se refere aos lotes incrementais, não a uma nova tradução de todo o catálogo histórico; as quantidades e a procedência de cada distribuição ficam nos registros e notas da Release.
 
-O **OpenAI Codex** é uma ferramenta auxiliar integrada ao fluxo. Ele foi utilizado para:
+O lote não deve ser apresentado como tradução produzida pelo Gacha PT-BR Studio nem como promoção de seus rascunhos. Os originais do Studio, a memória de tradução e o glossário permaneceram intactos. A integração usa o retorno direto autorizado, mantendo separada a procedência das traduções históricas.
 
-- produzir as traduções PT-BR das entradas do catálogo em grande escala;
-- aplicar correções orientadas pelos requisitos do projeto;
-- apoiar o desenvolvimento e a depuração do plugin;
-- apoiar o desenvolvimento e a depuração do instalador gráfico;
-- automatizar consolidação, auditoria, compilação, empacotamento e testes;
-- auxiliar na análise de logs, capturas e falhas relatadas;
-- acelerar a documentação técnica.
+O trabalho preserva marcadores, variáveis, números, quebras de linha e outros elementos estruturais das fontes. A comparação com o original para traduzir e as verificações automáticas de integridade não significam revisão humana integral. Não houve uma segunda revisão editorial geral de estilo deste lote; a condição de beta e a possibilidade de correções permanecem explícitas.
 
-O Codex não determina sozinho o escopo, a qualidade aceitável, a compatibilidade ou a publicação. Essas decisões permanecem comigo.
+## Engenharia, testes e limites
 
-## Estado editorial da versão 0.1.1 beta
+O OpenAI Codex também auxilia em engenharia, automação, testes e documentação. Ferramentas de extração, comparação por chave e hash e validação estrutural ajudam a integrar alterações sem refazer traduções não afetadas. Essas verificações não garantem ausência de erros de sentido nem substituem o teste real no jogo.
 
-| Classificação interna | Entradas |
-| --- | ---: |
-| `machine` | 198.773 |
-| `reviewed` | 24.873 |
-| `draft` | 89 |
-| `safety-repaired` | 8 |
-| **Total efetivo** | **223.743** |
+A preparação da migração não aprova, por si só, o cliente candidato. A publicação permanece condicionada aos gates técnicos, ao teste no cliente real e à aprovação do proprietário. Versão, cobertura, hashes e clientes efetivamente validados devem ser consultados na [Release correspondente](https://github.com/kacksdev/browndust2-ptbr/releases) e no [canal estável do atualizador](https://raw.githubusercontent.com/kacksdev/browndust2-ptbr/main/updates/stable.json), sem transformar este documento em uma lista variável de versões.
 
-- O catálogo PT-BR foi produzido com auxílio do Codex sob minha direção.
-- `reviewed` indica tratamento editorial explícito no fluxo; não equivale a uma segunda revisão humana profissional independente.
-- Auditorias automáticas detectam estrutura, marcadores, Unicode e padrões conhecidos, mas não substituem contexto narrativo.
-- Traduções literais, escolhas inadequadas ou inconsistências ainda podem existir nesta beta.
-
-## Processo de validação
-
-1. Uso o mod no cliente e identifico problemas de tradução, contexto, estabilidade, desempenho ou cobertura.
-2. Registro o comportamento e defino a prioridade.
-3. O Codex auxilia na investigação, nas alterações em escala e nas verificações técnicas.
-4. Reinstalo e executo o pacote resultante no jogo.
-5. Valido instalação, reparo, atualização, remoção e restauração sobre um cliente controlado.
-6. A correção só é incorporada quando o resultado atende ao critério definido para a versão.
-
-Essa atribuição registra o uso da ferramenta sem transferir a ela a autoria ou a direção do projeto.
+Brown Dust 2 e seus materiais pertencem aos respectivos titulares. Consulte a [licença do projeto](../LICENSE) e os [avisos de terceiros](../THIRD-PARTY-NOTICES.md).

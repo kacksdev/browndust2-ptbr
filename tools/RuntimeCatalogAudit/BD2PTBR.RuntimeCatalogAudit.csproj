@@ -9,8 +9,6 @@
   </PropertyGroup>
   <ItemGroup>
     <Compile Include="..\..\src\BD2PTBR.Plugin\BD2PTBR\PlaceholderValidator.cs" Link="PlaceholderValidator.cs" />
-    <Reference Include="Newtonsoft.Json">
-      <HintPath>..\..\lib\references\Newtonsoft.Json.dll</HintPath>
-    </Reference>
+    <PackageReference Include="Newtonsoft.Json" Version="13.0.3" />
   </ItemGroup>
 </Project>

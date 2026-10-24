@@ -1,6 +1,7 @@
 using System;
 using System.Diagnostics;
 using System.IO;
+using System.Threading;
 using System.Threading.Tasks;
 using System.Windows;
 using System.Windows.Input;
@@ -15,12 +16,14 @@ namespace BD2PTBR.Installer
         private const string GameBananaUrl = "https://gamebanana.com/mods/706840";
         private bool _busy;
         private InstallationInspection _inspection;
+        private UpdateRelease _release;
 
-        public MainWindow()
+        public MainWindow(string initialGameRoot = null)
         {
             InitializeComponent();
             ConfigureResponsiveWindow();
-            Loaded += async (_, __) => await DetectAndInspectAsync(null);
+            Loaded += async (_, __) => { await DetectAndInspectAsync(initialGameRoot); if (_inspection != null) await CheckUpdatesAsync(); };
+            Closing += (_, e) => { if (_busy) e.Cancel = true; };
         }
 
         private void ConfigureResponsiveWindow()
@@ -38,6 +41,7 @@ namespace BD2PTBR.Installer
         private async Task DetectAndInspectAsync(string requestedPath)
         {
             SetBusy(true);
+            _release = null;
             SetStatus("LOCALIZANDO O JOGO", "Validando a pasta oficial do Brown Dust 2.", Brushes.White);
             AddLog("Iniciando detecção segura do cliente.");
             try
@@ -62,8 +66,7 @@ namespace BD2PTBR.Installer
                 _inspection = null;
                 GamePathBox.Text = requestedPath ?? string.Empty;
                 SetStatus("PASTA NÃO CONFIRMADA", error.Message, new SolidColorBrush(Color.FromRgb(229, 181, 84)));
-                PrimaryButton.Content = "ESCOLHER PASTA";
-                PrimaryButton.IsEnabled = true;
+                UpdatePrimaryAction();
                 VerifyButton.IsEnabled = false;
                 RemoveButton.IsEnabled = false;
                 AddLog("Detecção não concluída: " + error.Message);
@@ -80,13 +83,11 @@ namespace BD2PTBR.Installer
             {
                 case InstallationHealth.InstalledAndVerified:
                     SetStatus("INSTALAÇÃO VERIFICADA", inspection.Summary, new SolidColorBrush(Color.FromRgb(215, 230, 219)));
-                    PrimaryButton.Content = "ATUALIZAR / REINSTALAR";
                     VerifyButton.IsEnabled = true;
                     RemoveButton.IsEnabled = true;
                     break;
                 case InstallationHealth.RepairRequired:
                     SetStatus("REPARO NECESSÁRIO", inspection.Summary, new SolidColorBrush(Color.FromRgb(229, 181, 84)));
-                    PrimaryButton.Content = "REPARAR AGORA";
                     VerifyButton.IsEnabled = true;
                     RemoveButton.IsEnabled = true;
                     foreach (var issue in inspection.Issues)
@@ -96,28 +97,101 @@ namespace BD2PTBR.Installer
                     break;
                 case InstallationHealth.LegacyInstallation:
                     SetStatus("VERSÃO ANTERIOR ENCONTRADA", inspection.Summary, Brushes.White);
-                    PrimaryButton.Content = "ATUALIZAR COM SEGURANÇA";
                     VerifyButton.IsEnabled = false;
                     RemoveButton.IsEnabled = true;
                     break;
                 default:
                     SetStatus("PRONTO PARA INSTALAR", inspection.Summary, Brushes.White);
-                    PrimaryButton.Content = "INSTALAR TRADUÇÃO";
                     VerifyButton.IsEnabled = false;
                     RemoveButton.IsEnabled = false;
                     break;
             }
-            PrimaryButton.IsEnabled = true;
+            UpdatePrimaryAction();
+            RestoreButton.IsEnabled = inspection.CanRestore;
+        }
+
+        private void UpdatePrimaryAction()
+        {
+            var installed = _inspection != null && _inspection.Health != InstallationHealth.NotInstalled;
+            if (_release != null)
+            {
+                PrimaryButton.Content = _release.modVersion == _inspection.ModVersion
+                    ? "REPARAR / REINSTALAR"
+                    : (installed ? "ATUALIZAR PARA " : "INSTALAR ") + _release.modVersion;
+                PrimaryButton.ToolTip = "Baixa e aplica o pacote compatível após sua confirmação.";
+            }
+            else
+            {
+                PrimaryButton.Content = !installed ? "INSTALAR TRADUÇÃO"
+                    : _inspection.Health == InstallationHealth.RepairRequired ? "REPARAR TRADUÇÃO"
+                    : _inspection.Health == InstallationHealth.LegacyInstallation ? "ATUALIZAR MOD"
+                    : "REINSTALAR TRADUÇÃO";
+                PrimaryButton.ToolTip = _inspection == null
+                    ? "Escolha a pasta do jogo para consultar a compatibilidade."
+                    : "Use Buscar atualização para localizar um pacote compatível.";
+            }
+            PrimaryButton.IsEnabled = !_busy && _inspection != null && _release != null;
         }
 
         private async void PrimaryAction_OnClick(object sender, RoutedEventArgs e)
         {
-            if (_inspection == null)
-            {
-                Browse_OnClick(sender, e);
-                return;
-            }
+            if (_busy || _inspection == null || _release == null) return;
+            if (MessageBox.Show("Baixar e aplicar o mod " + _release.modVersion + " neste cliente? Um backup será criado antes de qualquer alteração.", "Confirmar atualização", MessageBoxButton.YesNo, MessageBoxImage.Question) != MessageBoxResult.Yes) return;
             await RunOperationAsync(InstallerAction.Install);
+        }
+
+        private async void CheckUpdates_OnClick(object sender, RoutedEventArgs e) => await CheckUpdatesAsync();
+
+        private void Starter_OnClick(object sender, RoutedEventArgs e)
+        {
+            if (_busy) return;
+            try
+            {
+                var message = OfficialStarter.Open();
+                SetStatus("STARTER OFICIAL", message, Brushes.White);
+                AddLog(message);
+            }
+            catch (Exception error)
+            {
+                SetStatus("STARTER NÃO ABERTO", error.Message, new SolidColorBrush(Color.FromRgb(229, 181, 84)));
+                AddLog("Starter: " + error.Message);
+                DetailsExpander.IsExpanded = true;
+            }
+        }
+
+        private async Task CheckUpdatesAsync()
+        {
+            if (_busy || _inspection == null) return;
+            SetBusy(true);
+            _release = null;
+            UpdatePrimaryAction();
+            SetStatus("CONSULTANDO ATUALIZAÇÕES", "Verificando o canal oficial e a compatibilidade deste cliente.", Brushes.White);
+            try
+            {
+                var root = _inspection.GameRoot;
+                _release = await new UpdateService().CheckAsync(root, CancellationToken.None);
+                Version installed;
+                if (_release != null && Version.TryParse(_inspection.ModVersion, out installed) && Version.Parse(_release.modVersion) < installed) _release = null;
+                if (_release == null)
+                {
+                    SetStatus("SEM PACOTE COMPATÍVEL", "Nenhuma atualização compatível está disponível neste canal. A instalação existente não foi alterada.", new SolidColorBrush(Color.FromRgb(229, 181, 84)));
+                }
+                else
+                {
+                    bool same = _release.modVersion == _inspection.ModVersion;
+                    SetStatus(same ? "VERSÃO ATUAL DISPONÍVEL" : "ATUALIZAÇÃO COMPATÍVEL", "Mod " + _release.modVersion + ". O download só começa após sua confirmação.", Brushes.White);
+                    AddLog("Canal validado: mod " + _release.modVersion + "; cliente compatível.");
+                }
+            }
+            catch (Exception error) { PresentFailure(OperationReport.Failure("CheckUpdate", _inspection.GameRoot, error)); }
+            finally { SetBusy(false, true); UpdatePrimaryAction(); RestoreButton.IsEnabled = _inspection.CanRestore; }
+        }
+
+        private async void Restore_OnClick(object sender, RoutedEventArgs e)
+        {
+            if (_busy || _inspection == null || !_inspection.CanRestore) return;
+            if (MessageBox.Show("Restaurar o backup anterior? A recuperação será bloqueada se o cliente do jogo mudou ou se os backups estiverem corrompidos.", "Confirmar recuperação", MessageBoxButton.YesNo, MessageBoxImage.Question) == MessageBoxResult.Yes)
+                await RunOperationAsync(InstallerAction.Restore);
         }
 
         private async void Verify_OnClick(object sender, RoutedEventArgs e)
@@ -159,7 +233,11 @@ namespace BD2PTBR.Installer
                 var progress = new Progress<InstallerProgress>(UpdateProgress);
                 OperationReport report;
                 var gameRoot = _inspection.GameRoot;
-                if (action == InstallerAction.Uninstall)
+                if (action == InstallerAction.Restore)
+                {
+                    report = await Task.Run(() => new InstallerEngine().Restore(gameRoot, progress));
+                }
+                else if (action == InstallerAction.Uninstall)
                 {
                     report = await Task.Run(() => new InstallerEngine().Uninstall(gameRoot, progress));
                 }
@@ -169,7 +247,9 @@ namespace BD2PTBR.Installer
                 }
                 else
                 {
-                    report = await Task.Run(() => new InstallerEngine().Install(gameRoot, progress));
+                    if (_release == null) throw new InvalidOperationException("Consulte o canal de atualização antes de instalar.");
+                    var options = await new UpdateService().DownloadAsync(_release, gameRoot, progress, CancellationToken.None);
+                    report = await Task.Run(() => new InstallerEngine().Install(gameRoot, progress, options));
                 }
 
                 SetStatus("OPERAÇÃO CONCLUÍDA", report.Message, new SolidColorBrush(Color.FromRgb(215, 230, 219)));
@@ -224,7 +304,7 @@ namespace BD2PTBR.Installer
         {
             using (var picker = new Forms.FolderBrowserDialog())
             {
-                picker.Description = "Selecione a pasta que contém Brown Dust II.exe";
+                picker.Description = "Selecione a pasta que contém BrownDust II.exe";
                 picker.ShowNewFolderButton = false;
                 if (picker.ShowDialog() == Forms.DialogResult.OK)
                 {
@@ -237,16 +317,26 @@ namespace BD2PTBR.Installer
         {
             _busy = busy;
             BrowseButtonState(!busy);
+            StarterButton.IsEnabled = !busy;
+            CheckUpdatesButton.IsEnabled = !busy && _inspection != null;
             if (busy)
             {
                 PrimaryButton.IsEnabled = false;
                 VerifyButton.IsEnabled = false;
                 RemoveButton.IsEnabled = false;
+                RestoreButton.IsEnabled = false;
             }
             else if (!preserveActionState && _inspection != null)
             {
                 ApplyInspection(_inspection);
             }
+            else if (_inspection != null)
+            {
+                VerifyButton.IsEnabled = _inspection.Health == InstallationHealth.InstalledAndVerified || _inspection.Health == InstallationHealth.RepairRequired;
+                RemoveButton.IsEnabled = _inspection.Health != InstallationHealth.NotInstalled;
+                RestoreButton.IsEnabled = _inspection.CanRestore;
+            }
+            UpdatePrimaryAction();
         }
 
         private void BrowseButtonState(bool enabled)

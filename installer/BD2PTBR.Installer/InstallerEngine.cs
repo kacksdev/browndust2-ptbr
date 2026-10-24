@@ -13,26 +13,38 @@ namespace BD2PTBR.Installer
 {
     public sealed class InstallerEngine
     {
-        public const string InstallerVersion = "0.1.1";
+        public const string InstallerVersion = "0.2.0";
         private const string StateFileName = "install-state.json";
         private const string JournalFileName = "pending-transaction.json";
+        private const string RestorePointFileName = "restore-point.json";
+        // Only these exact v096 layers are owned legacy files. A name alone
+        // never authorizes deleting a modified or third-party translation.
+        private static readonly Dictionary<string, string> LegacyV096CatalogLayers = new Dictionary<string, string>(StringComparer.OrdinalIgnoreCase)
+        {
+            { "zz-safety-overrides.jsonl", "863f42ad5fd1c1ff6b8d5903c78e7ffbd646ebfeaf195432a0e851ec61d698f1" },
+            { "zzz-reviewed-overrides.jsonl", "822e3edb0243b9d56241b360a1fdab419f9343e269e6cb2fb8d13a4400de4246" },
+            { "zzzz-v090-contextual-overrides.jsonl", "c1b8a165d784aa7524c122d6de1a9420e3c870012f9ab6beb6f6372af4ac552f" },
+            { "zzzzz-v096-editorial-overrides.jsonl", "02624266b4e4e2252f24b7996fe3a571cdf52ea5dd871ae4e0627f488b29dc45" }
+        };
         private int _fileOperations;
 
-        public InstallationInspection Inspect(string requestedGameRoot)
+        public InstallationInspection Inspect(string requestedGameRoot, InstallerEngineOptions options = null)
         {
             var gameRoot = GameDetector.ResolveAndValidate(requestedGameRoot);
-            using (var payload = EmbeddedPayload.Open())
             {
                 var inspection = new InstallationInspection
                 {
                     GameRoot = gameRoot,
                     DetectedPackage = GameDetector.DetectPackage(gameRoot),
-                    TestedClient = payload.Manifest.testedClientVersion,
-                    ModVersion = payload.Manifest.modVersion
+                    TestedClient = GameCompatibility.ReadVersion(gameRoot),
+                    ModVersion = "não instalado"
                 };
 
-                var instanceRoot = GetInstanceRoot(gameRoot);
+                var instanceRoot = GetInstanceRoot(gameRoot, options);
+                using (OperationLock.Acquire(instanceRoot))
+                {
                 RecoverPendingTransaction(instanceRoot, gameRoot, null);
+                inspection.CanRestore = File.Exists(Path.Combine(instanceRoot, RestorePointFileName));
                 var statePath = Path.Combine(instanceRoot, StateFileName);
                 var legacyPlugin = Path.Combine(gameRoot, "BepInEx", "plugins", "BD2PTBR", "BD2PTBR.dll");
                 if (!File.Exists(statePath))
@@ -43,11 +55,16 @@ namespace BD2PTBR.Installer
                     inspection.Summary = File.Exists(legacyPlugin)
                         ? "Uma instalação anterior foi encontrada e pode ser atualizada com segurança."
                         : "A tradução ainda não está instalada neste cliente.";
+                    if (File.Exists(legacyPlugin))
+                    {
+                        try { inspection.ModVersion = AssemblyName.GetAssemblyName(legacyPlugin).Version.ToString(3); }
+                        catch (BadImageFormatException) { inspection.ModVersion = "instalação legada"; }
+                    }
                     return inspection;
                 }
 
                 var state = LoadState(statePath, gameRoot);
-                foreach (var entry in payload.Manifest.files)
+                foreach (var entry in state.files)
                 {
                     var destination = PathSafety.CombineUnder(gameRoot, entry.path);
                     if (!File.Exists(destination))
@@ -55,7 +72,7 @@ namespace BD2PTBR.Installer
                         inspection.Issues.Add("Arquivo ausente: " + entry.path);
                         continue;
                     }
-                    if (!Hashing.EqualsSha256(destination, entry.sha256))
+                    if (!Hashing.EqualsSha256(destination, entry.installedSha256))
                     {
                         inspection.Issues.Add("Arquivo alterado: " + entry.path);
                     }
@@ -69,6 +86,7 @@ namespace BD2PTBR.Installer
                     : "A instalação precisa de reparo. Nenhum arquivo será alterado até sua confirmação.";
                 inspection.ModVersion = state.modVersion;
                 return inspection;
+                }
             }
         }
 
@@ -82,16 +100,28 @@ namespace BD2PTBR.Installer
             var warnings = new List<string>();
             var gameRoot = GameDetector.ResolveAndValidate(requestedGameRoot);
             EnsureGameIsClosed(options);
-            EnsureWriteAccess(gameRoot);
             Report(progress, 2, "PREPARAÇÃO", "Cliente localizado e validado.");
 
-            using (var payload = EmbeddedPayload.Open(progress))
+            using (var payload = OpenPayload(options, progress))
             {
+                if (!string.IsNullOrWhiteSpace(options.ExpectedModVersion) && options.ExpectedModVersion != payload.Manifest.modVersion)
+                    throw new InvalidDataException("A versão interna do pacote não corresponde ao canal de atualização.");
+                GameCompatibility.EnsureCompatible(gameRoot, payload.Manifest);
+                EnsureWriteAccess(gameRoot);
                 var instanceRoot = GetInstanceRoot(gameRoot, options);
+                using (OperationLock.Acquire(instanceRoot))
+                {
                 Directory.CreateDirectory(instanceRoot);
                 RecoverPendingTransaction(instanceRoot, gameRoot, progress);
                 var statePath = Path.Combine(instanceRoot, StateFileName);
                 var previousState = File.Exists(statePath) ? LoadState(statePath, gameRoot) : null;
+                Version previousVersion;
+                Version newVersion;
+                if (previousState != null && Version.TryParse(previousState.modVersion, out previousVersion) &&
+                    Version.TryParse(payload.Manifest.modVersion, out newVersion) && newVersion < previousVersion)
+                    throw new InvalidDataException("Downgrade bloqueado. Use Restaurar versão anterior para recuperar o backup local.");
+                bool repair = previousState != null && previousState.modVersion == payload.Manifest.modVersion;
+                if (previousState != null && !repair) VerifyInstalledState(previousState, gameRoot);
                 var loaderPreExisting = previousState != null
                     ? previousState.loaderPreExisting
                     : File.Exists(Path.Combine(gameRoot, "BepInEx", "core", "BepInEx.dll"));
@@ -105,8 +135,12 @@ namespace BD2PTBR.Installer
                 var payloadByPath = payload.Manifest.files.ToDictionary(
                     item => PathSafety.NormalizeRelative(item.path),
                     StringComparer.OrdinalIgnoreCase);
+                var legacyObsolete = previousState == null
+                    ? FindLegacyV096ObsoleteLayers(gameRoot, payloadByPath, warnings)
+                    : new Dictionary<string, InstalledFileState>(StringComparer.OrdinalIgnoreCase);
+                foreach (var entry in legacyObsolete) previousByPath.Add(entry.Key, entry.Value);
                 var changedPaths = payloadByPath.Keys.Concat(previousByPath.Keys.Except(payloadByPath.Keys, StringComparer.OrdinalIgnoreCase)).ToList();
-                var journal = PrepareTransaction(instanceRoot, gameRoot, statePath, "install", changedPaths, progress);
+                var journal = PrepareTransaction(instanceRoot, gameRoot, statePath, repair ? "repair" : "install", changedPaths, progress);
 
                 try
                 {
@@ -117,6 +151,7 @@ namespace BD2PTBR.Installer
                         modVersion = payload.Manifest.modVersion,
                         installedAtUtc = DateTime.UtcNow.ToString("o"),
                         gameRoot = gameRoot,
+                        clientIdentity = GameCompatibility.Capture(gameRoot),
                         loaderPreExisting = loaderPreExisting
                     };
 
@@ -124,6 +159,8 @@ namespace BD2PTBR.Installer
                     foreach (var relativePath in obsolete)
                     {
                         RestoreOrRemoveObsolete(gameRoot, instanceRoot, previousByPath[relativePath], warnings);
+                        if (legacyObsolete.ContainsKey(relativePath) && !File.Exists(PathSafety.CombineUnder(gameRoot, relativePath)))
+                            CountOperation(options);
                     }
 
                     var total = Math.Max(1, payloadByPath.Count);
@@ -181,6 +218,7 @@ namespace BD2PTBR.Installer
                     report.Warnings = warnings;
                     throw new InstallerOperationException(report, error);
                 }
+                }
             }
         }
 
@@ -191,22 +229,72 @@ namespace BD2PTBR.Installer
         {
             options = options ?? new InstallerEngineOptions();
             var gameRoot = GameDetector.ResolveAndValidate(requestedGameRoot);
-            Report(progress, 10, "VERIFICAÇÃO", "Validando o pacote incorporado.");
-            using (var payload = EmbeddedPayload.Open(progress))
+            EnsureGameIsClosed(options);
+            var instanceRoot = GetInstanceRoot(gameRoot, options);
+            using (OperationLock.Acquire(instanceRoot))
             {
-                var instanceRoot = GetInstanceRoot(gameRoot, options);
                 RecoverPendingTransaction(instanceRoot, gameRoot, progress);
-                VerifyPayloadAtDestination(payload.Manifest, gameRoot);
+                var state = LoadState(Path.Combine(instanceRoot, StateFileName), gameRoot);
+                VerifyInstalledState(state, gameRoot);
                 Report(progress, 100, "VERIFICADO", "Todos os arquivos instalados correspondem ao pacote oficial.");
                 return new OperationReport
                 {
                     Success = true,
                     Action = "Verify",
                     GameRoot = gameRoot,
-                    ModVersion = payload.Manifest.modVersion,
+                    ModVersion = state.modVersion,
                     Message = "Integridade da instalação confirmada.",
-                    FilesProcessed = payload.Manifest.files.Count
+                    FilesProcessed = state.files.Count
                 };
+            }
+        }
+
+        private static EmbeddedPayload OpenPayload(InstallerEngineOptions options, IProgress<InstallerProgress> progress)
+        {
+            if (string.IsNullOrWhiteSpace(options.PayloadPath)) return EmbeddedPayload.Open(progress);
+            if (!Hashing.EqualsSha256(options.PayloadPath, options.ExpectedPayloadSha256))
+                throw new InvalidDataException("O pacote baixado não corresponde ao SHA-256 publicado.");
+            return EmbeddedPayload.OpenFile(options.PayloadPath, progress, options.ExpectedPayloadSha256);
+        }
+
+        private static void VerifyInstalledState(InstallState state, string gameRoot)
+        {
+            foreach (var item in state.files)
+                if (!Hashing.EqualsSha256(PathSafety.CombineUnder(gameRoot, item.path), item.installedSha256))
+                    throw new InvalidDataException("Arquivo instalado ausente ou alterado: " + item.path);
+        }
+
+        public OperationReport Restore(string requestedGameRoot, IProgress<InstallerProgress> progress, InstallerEngineOptions options = null)
+        {
+            options = options ?? new InstallerEngineOptions();
+            var gameRoot = GameDetector.ResolveAndValidate(requestedGameRoot);
+            EnsureGameIsClosed(options);
+            var instanceRoot = GetInstanceRoot(gameRoot, options);
+            using (OperationLock.Acquire(instanceRoot))
+            {
+                RecoverPendingTransaction(instanceRoot, gameRoot, progress);
+                var point = JsonStorage.Read<TransactionJournal>(Path.Combine(instanceRoot, RestorePointFileName));
+                if (!PathSafety.PathsEqual(point.gameRoot, gameRoot)) throw new InvalidDataException("Ponto de restauração de outro cliente.");
+                GameCompatibility.EnsureIdentity(gameRoot, point.clientIdentity);
+                var statePath = Path.Combine(instanceRoot, StateFileName);
+                if (File.Exists(statePath)) VerifyInstalledState(LoadState(statePath, gameRoot), gameRoot);
+                ValidateTransactionBackups(instanceRoot, point);
+                var journal = PrepareTransaction(instanceRoot, gameRoot, statePath, "restore", point.files.Select(f => f.path), progress);
+                try
+                {
+                    RestoreTransactionFiles(instanceRoot, point, false);
+                    CountOperation(options);
+                    journal.status = "stateCommitted";
+                    JsonStorage.WriteAtomic(Path.Combine(instanceRoot, JournalFileName), journal);
+                    CommitTransaction(instanceRoot, journal);
+                    return new OperationReport { Success = true, Action = "Restore", GameRoot = gameRoot, Message = "Versão anterior restaurada e verificada.", RolledBack = true };
+                }
+                catch (Exception error)
+                {
+                    var report = OperationReport.Failure("Restore", gameRoot, error);
+                    report.RolledBack = RollbackTransaction(instanceRoot, journal, progress);
+                    throw new InstallerOperationException(report, error);
+                }
             }
         }
 
@@ -214,6 +302,13 @@ namespace BD2PTBR.Installer
             string requestedGameRoot,
             IProgress<InstallerProgress> progress,
             InstallerEngineOptions options = null)
+        {
+            var gameRoot = GameDetector.ResolveAndValidate(requestedGameRoot);
+            using (OperationLock.Acquire(GetInstanceRoot(gameRoot, options)))
+                return UninstallCore(gameRoot, progress, options);
+        }
+
+        private OperationReport UninstallCore(string requestedGameRoot, IProgress<InstallerProgress> progress, InstallerEngineOptions options)
         {
             options = options ?? new InstallerEngineOptions();
             _fileOperations = 0;
@@ -282,6 +377,7 @@ namespace BD2PTBR.Installer
                     if (entry != null && entry.originalExisted)
                     {
                         var original = PathSafety.CombineUnder(instanceRoot, entry.originalBackupRelativePath);
+                        ValidateOriginalBackup(original, entry);
                         if (!File.Exists(original))
                         {
                             throw new InvalidDataException("Backup original ausente: " + relativePath);
@@ -401,6 +497,8 @@ namespace BD2PTBR.Installer
             {
                 throw new InvalidDataException("O estado pertence a outra pasta do jogo.");
             }
+            foreach (var entry in state.files) GameCompatibility.EnsureModPath(entry.path);
+            if (state.files.Select(f => f.path).Distinct(StringComparer.OrdinalIgnoreCase).Count() != state.files.Count) throw new InvalidDataException("Estado contém caminhos duplicados.");
             return state;
         }
 
@@ -426,7 +524,39 @@ namespace BD2PTBR.Installer
             Directory.CreateDirectory(Path.GetDirectoryName(backupPath));
             File.Copy(destination, backupPath, true);
             entry.originalBackupRelativePath = backupRelative.Replace('\\', '/');
+            entry.originalBackupSha256 = Hashing.Sha256(destination);
+            ValidateOriginalBackup(backupPath, entry);
             return entry;
+        }
+
+        private static void ValidateOriginalBackup(string path, InstalledFileState entry)
+        {
+            if (!File.Exists(path) || (!string.IsNullOrWhiteSpace(entry.originalBackupSha256) && !Hashing.EqualsSha256(path, entry.originalBackupSha256)))
+                throw new InvalidDataException("Backup original ausente ou corrompido: " + entry.path);
+        }
+
+        private static Dictionary<string, InstalledFileState> FindLegacyV096ObsoleteLayers(
+            string gameRoot,
+            IDictionary<string, PayloadFile> payloadByPath,
+            ICollection<string> warnings)
+        {
+            var found = new Dictionary<string, InstalledFileState>(StringComparer.OrdinalIgnoreCase);
+            foreach (var layer in LegacyV096CatalogLayers)
+            {
+                var relative = PathSafety.NormalizeRelative("BepInEx/plugins/BD2PTBR/translations/" + layer.Key);
+                if (payloadByPath.ContainsKey(relative)) continue;
+                var destination = PathSafety.CombineUnder(gameRoot, relative);
+                if (!File.Exists(destination)) continue;
+                if (!Hashing.EqualsSha256(destination, layer.Value))
+                {
+                    warnings.Add("Camada legada desconhecida ou alterada foi preservada: " + relative.Replace('\\', '/'));
+                    continue;
+                }
+                // Including the path before PrepareTransaction backs up the
+                // old bytes for rollback and the manual legacy restore point.
+                found.Add(relative, new InstalledFileState { path = relative.Replace('\\', '/'), installedSha256 = layer.Value });
+            }
+            return found;
         }
 
         private static void RestoreOrRemoveObsolete(
@@ -449,6 +579,7 @@ namespace BD2PTBR.Installer
             if (entry.originalExisted)
             {
                 var original = PathSafety.CombineUnder(instanceRoot, entry.originalBackupRelativePath);
+                ValidateOriginalBackup(original, entry);
                 ReplaceFileVerified(original, destination, Hashing.Sha256(original));
             }
             else
@@ -476,13 +607,15 @@ namespace BD2PTBR.Installer
                 gameRoot = gameRoot,
                 backupRoot = backupRoot,
                 statePath = statePath,
-                stateExisted = File.Exists(statePath)
+                stateExisted = File.Exists(statePath),
+                clientIdentity = GameCompatibility.Capture(gameRoot)
             };
 
             if (journal.stateExisted)
             {
                 journal.stateBackupPath = Path.Combine(backupRoot, "installer-state.json");
                 File.Copy(statePath, journal.stateBackupPath, true);
+                journal.stateBackupSha256 = Hashing.Sha256(statePath);
             }
 
             var distinct = relativePaths
@@ -506,6 +639,8 @@ namespace BD2PTBR.Installer
                     var backup = PathSafety.CombineUnder(backupRoot, record.backupRelativePath);
                     Directory.CreateDirectory(Path.GetDirectoryName(backup));
                     File.Copy(destination, backup, true);
+                    record.backupSha256 = Hashing.Sha256(destination);
+                    if (!Hashing.EqualsSha256(backup, record.backupSha256)) throw new IOException("Falha ao verificar backup: " + relativePath);
                 }
                 journal.files.Add(record);
                 if (index % 25 == 0)
@@ -540,6 +675,7 @@ namespace BD2PTBR.Installer
                 return;
             }
             Report(progress, 1, "RECUPERAÇÃO", "Uma operação interrompida foi encontrada. Restaurando o estado anterior.");
+            GameCompatibility.EnsureIdentity(gameRoot, journal.clientIdentity);
             RestoreTransactionFiles(instanceRoot, journal);
             Report(progress, 2, "RECUPERAÇÃO", "Estado anterior restaurado com sucesso.");
         }
@@ -567,8 +703,29 @@ namespace BD2PTBR.Installer
             CommitTransactionFiles(instanceRoot, journal);
         }
 
-        private static void RestoreTransactionFiles(string instanceRoot, TransactionJournal journal)
+        private static void ValidateTransactionBackups(string instanceRoot, TransactionJournal journal)
         {
+            PathSafety.EnsureUnder(Path.Combine(instanceRoot, "transactions"), journal.backupRoot);
+            if (!PathSafety.PathsEqual(journal.statePath, Path.Combine(instanceRoot, StateFileName))) throw new InvalidDataException("Estado transacional fora da instância.");
+            foreach (var record in journal.files) GameCompatibility.EnsureModPath(record.path);
+            foreach (var record in journal.files.Where(f => f.existed))
+            {
+                GameCompatibility.EnsureModPath(record.path);
+                var backup = PathSafety.CombineUnder(journal.backupRoot, record.backupRelativePath);
+                if (!File.Exists(backup) || (!string.IsNullOrWhiteSpace(record.backupSha256) && !Hashing.EqualsSha256(backup, record.backupSha256)))
+                    throw new InvalidDataException("Backup ausente ou corrompido: " + record.path);
+            }
+            if (journal.stateExisted)
+            {
+                PathSafety.EnsureUnder(journal.backupRoot, journal.stateBackupPath);
+                if (!File.Exists(journal.stateBackupPath)) throw new InvalidDataException("Estado anterior ausente.");
+                if (!string.IsNullOrWhiteSpace(journal.stateBackupSha256) && !Hashing.EqualsSha256(journal.stateBackupPath, journal.stateBackupSha256)) throw new InvalidDataException("Backup do estado corrompido.");
+            }
+        }
+
+        private static void RestoreTransactionFiles(string instanceRoot, TransactionJournal journal, bool finalize = true)
+        {
+            ValidateTransactionBackups(instanceRoot, journal);
             var backupRoot = Path.GetFullPath(journal.backupRoot);
             PathSafety.EnsureUnder(instanceRoot, backupRoot);
             foreach (var record in journal.files.AsEnumerable().Reverse())
@@ -604,11 +761,23 @@ namespace BD2PTBR.Installer
             }
 
             RemoveEmptyDirectories(Path.Combine(journal.gameRoot, "BepInEx"), journal.gameRoot);
-            CommitTransactionFiles(instanceRoot, journal);
+            if (finalize) CommitTransactionFiles(instanceRoot, journal);
         }
 
         private static void CommitTransactionFiles(string instanceRoot, TransactionJournal journal)
         {
+            if (journal.status == "stateCommitted" && (journal.action == "install" || journal.action == "restore"))
+            {
+                JsonStorage.WriteAtomic(Path.Combine(instanceRoot, RestorePointFileName), journal);
+                var pending = Path.Combine(instanceRoot, JournalFileName);
+                if (File.Exists(pending)) File.Delete(pending);
+                return;
+            }
+            if (journal.status == "stateCommitted" && journal.action == "uninstall")
+            {
+                var pointPath = Path.Combine(instanceRoot, RestorePointFileName);
+                if (File.Exists(pointPath)) File.Delete(pointPath);
+            }
             var journalPath = Path.Combine(instanceRoot, JournalFileName);
             if (File.Exists(journalPath))
             {
@@ -854,6 +1023,26 @@ namespace BD2PTBR.Installer
                 {
                     throw new InvalidDataException("O pacote interno do mod não foi incorporado ao instalador.");
                 }
+                return OpenStream(resource, progress);
+            }
+        }
+
+        public static EmbeddedPayload OpenFile(string path, IProgress<InstallerProgress> progress = null, string expectedSha256 = null)
+        {
+            using (var stream = File.OpenRead(path))
+            {
+                var payload = OpenStream(stream, progress, expectedSha256);
+                if (payload.Manifest.schemaVersion != 3)
+                {
+                    payload.Dispose();
+                    throw new InvalidDataException("Atualizações externas exigem manifesto de compatibilidade v3.");
+                }
+                return payload;
+            }
+        }
+
+        private static EmbeddedPayload OpenStream(Stream resource, IProgress<InstallerProgress> progress, string expectedSha256 = null)
+        {
 
                 var temporaryRoot = Path.Combine(Path.GetTempPath(), "BD2PTBR", Guid.NewGuid().ToString("N"));
                 Directory.CreateDirectory(temporaryRoot);
@@ -867,6 +1056,8 @@ namespace BD2PTBR.Installer
                 Directory.CreateDirectory(result.ExtractedRoot);
                 try
                 {
+                    if (expectedSha256 != null && !Hashing.EqualsSha256(zipPath, expectedSha256))
+                        throw new InvalidDataException("O pacote mudou durante a preparação. Download recusado.");
                     using (var archive = ZipFile.OpenRead(zipPath))
                     {
                         var manifestEntry = archive.Entries.SingleOrDefault(entry =>
@@ -875,6 +1066,7 @@ namespace BD2PTBR.Installer
                         {
                             throw new InvalidDataException("Manifesto interno ausente.");
                         }
+                        if (manifestEntry.Length > 2 * 1024 * 1024) throw new InvalidDataException("Manifesto interno excede o limite.");
                         string manifestJson;
                         using (var reader = new StreamReader(manifestEntry.Open(), Encoding.UTF8, true))
                         {
@@ -884,7 +1076,7 @@ namespace BD2PTBR.Installer
                         ValidateManifest(result.Manifest);
                         var expected = result.Manifest.files.ToDictionary(
                             item => item.path.Replace('\\', '/'),
-                            StringComparer.Ordinal);
+                            StringComparer.OrdinalIgnoreCase);
                         var actualFiles = archive.Entries
                             .Where(entry => !string.IsNullOrEmpty(entry.Name) && entry.FullName != "payload-manifest.json")
                             .Select(entry => new
@@ -893,7 +1085,8 @@ namespace BD2PTBR.Installer
                                 RelativePath = entry.FullName.Replace('\\', '/')
                             })
                             .ToList();
-                        if (actualFiles.Count != expected.Count || actualFiles.Any(item => !expected.ContainsKey(item.RelativePath)))
+                        if (actualFiles.Count != expected.Count || actualFiles.Any(item => !expected.ContainsKey(item.RelativePath)) ||
+                            actualFiles.Select(item => item.RelativePath).Distinct(StringComparer.OrdinalIgnoreCase).Count() != actualFiles.Count)
                         {
                             throw new InvalidDataException("O pacote interno contém arquivos não declarados.");
                         }
@@ -904,13 +1097,23 @@ namespace BD2PTBR.Installer
                             index++;
                             var entry = item.Entry;
                             var metadata = expected[item.RelativePath];
+                            if (entry.Length != metadata.bytes) throw new InvalidDataException("Tamanho ZIP divergente: " + entry.FullName);
                             var relative = PathSafety.NormalizeRelative(item.RelativePath);
                             var destination = PathSafety.CombineUnder(result.ExtractedRoot, relative);
                             Directory.CreateDirectory(Path.GetDirectoryName(destination));
                             using (var input = entry.Open())
                             using (var output = File.Create(destination))
                             {
-                                input.CopyTo(output);
+                                var buffer = new byte[65536];
+                                long written = 0;
+                                int count;
+                                while ((count = input.Read(buffer, 0, buffer.Length)) > 0)
+                                {
+                                    written += count;
+                                    if (written > metadata.bytes) throw new InvalidDataException("Conteúdo ZIP maior que o declarado.");
+                                    output.Write(buffer, 0, count);
+                                }
+                                if (written != metadata.bytes) throw new InvalidDataException("Conteúdo ZIP incompleto.");
                             }
                             if (new FileInfo(destination).Length != metadata.bytes ||
                                 !Hashing.EqualsSha256(destination, metadata.sha256))
@@ -936,17 +1139,16 @@ namespace BD2PTBR.Installer
                     result.Dispose();
                     throw;
                 }
-            }
         }
 
         private static void ValidateManifest(PayloadManifest manifest)
         {
-            if (manifest == null || manifest.schemaVersion != 2 || manifest.files == null || manifest.files.Count == 0)
+            if (manifest == null || (manifest.schemaVersion != 2 && manifest.schemaVersion != 3) || manifest.files == null || manifest.files.Count == 0 || manifest.files.Count > 5000 || manifest.files.Sum(f => f.bytes) > 1024L * 1024 * 1024)
             {
                 throw new InvalidDataException("Manifesto interno inválido.");
             }
             var duplicates = manifest.files
-                .GroupBy(item => item.path, StringComparer.Ordinal)
+                .GroupBy(item => item.path.Replace('\\', '/'), StringComparer.OrdinalIgnoreCase)
                 .Where(group => group.Count() > 1)
                 .Select(group => group.Key)
                 .ToList();
@@ -954,9 +1156,19 @@ namespace BD2PTBR.Installer
             {
                 throw new InvalidDataException("Manifesto interno contém caminhos duplicados.");
             }
+            if (manifest.schemaVersion == 3)
+            {
+                var required = new[] {
+                    "winhttp.dll", "doorstop_config.ini", "BepInEx/core/BepInEx.dll", "BepInEx/core/BepInEx.Preloader.dll", "BepInEx/core/0Harmony.dll",
+                    "BepInEx/plugins/BD2PTBR/BD2PTBR.dll", "BepInEx/plugins/BD2PTBR/translations/complete.jsonl", "BepInEx/plugins/BD2PTBR/translations/hardcoded.jsonl"
+                };
+                if (required.Except(manifest.files.Select(f => f.path.Replace('\\', '/')), StringComparer.OrdinalIgnoreCase).Any())
+                    throw new InvalidDataException("O pacote não contém todos os componentes essenciais do mod.");
+            }
             foreach (var file in manifest.files)
             {
                 PathSafety.NormalizeRelative(file.path);
+                GameCompatibility.EnsureModPath(file.path);
                 if (file.bytes < 0 || string.IsNullOrWhiteSpace(file.sha256) || file.sha256.Length != 64)
                 {
                     throw new InvalidDataException("Entrada inválida no manifesto: " + file.path);
@@ -1073,6 +1285,12 @@ namespace BD2PTBR.Installer
             {
                 throw new InvalidDataException("Caminho relativo inseguro: " + value);
             }
+            foreach (var part in normalized.Split('\\'))
+            {
+                if (part.IndexOfAny(Path.GetInvalidFileNameChars()) >= 0 || part.EndsWith(".", StringComparison.Ordinal) || part.EndsWith(" ", StringComparison.Ordinal) ||
+                    System.Text.RegularExpressions.Regex.IsMatch(part, @"\A(CON|PRN|AUX|NUL|COM[1-9]|LPT[1-9])(\.|\z)", System.Text.RegularExpressions.RegexOptions.IgnoreCase))
+                    throw new InvalidDataException("Nome de arquivo inseguro no Windows: " + part);
+            }
             return normalized;
         }
 
@@ -1081,6 +1299,15 @@ namespace BD2PTBR.Installer
             var safeRelative = NormalizeRelative(relative);
             var combined = Path.GetFullPath(Path.Combine(parent, safeRelative));
             EnsureUnder(parent, combined);
+            var cursor = combined;
+            var boundary = Path.GetFullPath(parent).TrimEnd('\\');
+            while (!string.IsNullOrEmpty(cursor) && cursor.Length >= boundary.Length)
+            {
+                if ((File.Exists(cursor) || Directory.Exists(cursor)) && (File.GetAttributes(cursor) & FileAttributes.ReparsePoint) != 0)
+                    throw new InvalidDataException("Links e junções não são aceitos em caminhos gerenciados: " + cursor);
+                if (string.Equals(cursor, boundary, StringComparison.OrdinalIgnoreCase)) break;
+                cursor = Path.GetDirectoryName(cursor);
+            }
             return combined;
         }
 
