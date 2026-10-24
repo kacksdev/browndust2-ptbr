@@ -1,33 +1,16 @@
 # Compatibilidade
 
-## Versões registradas
+A [Release atual](https://github.com/kacksdev/browndust2-ptbr/releases/latest) registra os clientes efetivamente testados. O [canal estável](../updates/stable.json) declara pacote, versão e hashes dos arquivos críticos aceitos pelo atualizador.
 
-| Mod | Cliente | Pacote | Resultado |
-| --- | --- | --- | --- |
-| 0.1.1 beta | v2.32.10 (FHD-221:619) | 20260814000 | Instalação limpa, carregamento, catálogo, runtime, remoção e restauração aprovados |
-| 0.1.0 beta | 2.32.7 | 20260814000 | Distribuição retirada por falha no atalho de instalação |
+## Depois de uma atualização oficial
 
-Não utilize a versão `0.1.0`. O catálogo e o plugin daquela versão não apresentaram falha estrutural, mas o atalho podia informar sucesso sem executar a instalação.
+1. Conclua a atualização pelo Starter e os downloads adicionais solicitados pelo jogo.
+2. Feche o jogo e o Starter.
+3. Abra o mesmo BD2PTBR.exe e use **Buscar atualização**.
+4. Aplique somente o pacote compatível oferecido. Se não houver, preserve a instalação e acompanhe os avisos da Release.
 
-## Política após atualizações
+**Verificar** confere a integridade da instalação existente; não certifica sozinho compatibilidade com um cliente novo. **Restaurar versão anterior** recupera o estado local do mod e exige o mesmo cliente do ponto salvo; não desfaz atualizações oficiais.
 
-O plugin e o instalador não modificam o sistema de atualização do Brown Dust 2. O cliente deve ser atualizado pelo lançador oficial.
+O runtime valida o catálogo e os pontos essenciais antes de permanecer ativo. Mudanças internas podem exigir nova integração, enquanto textos novos precisam ser acrescentados ao catálogo. Não há promessa de compatibilidade com toda atualização futura.
 
-Quando o jogo muda:
-
-1. arquivos do cliente podem ser substituídos pelo atualizador;
-2. textos novos podem não existir no catálogo do mod;
-3. nomes internos ou assinaturas podem mudar;
-4. a compatibilidade precisa ser testada novamente.
-
-Depois de uma atualização oficial:
-
-1. feche o jogo;
-2. conclua a atualização pelo Brown Dust 2 Starter;
-3. abra o instalador do mod;
-4. use **Verificar**;
-5. use **Reparar** somente se o instalador indicar divergência.
-
-O runtime valida a integridade do catálogo e a existência dos pontos essenciais antes de permanecer ativo. Se uma dependência central falhar, os interceptores do mod são removidos e o idioma original é preservado. Esse comportamento reduz o risco de deixar o cliente em estado parcial, mas não constitui promessa absoluta para versões futuras ainda desconhecidas.
-
-Sempre consulte a Release mais recente antes de reinstalar o mod depois de uma atualização do jogo.
+Versões antigas e retiradas permanecem documentadas nas respectivas Releases e notas históricas. Não use esses registros como autorização para aplicar um pacote em outro cliente. Consulte também [Instalação e recuperação](./INSTALACAO.md).

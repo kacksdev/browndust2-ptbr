@@ -18,7 +18,8 @@ namespace BD2PTBR.Installer
                 return;
             }
 
-            var window = new MainWindow();
+            var rootIndex = Array.FindIndex(e.Args, value => value == "--game-root");
+            var window = new MainWindow(rootIndex >= 0 && rootIndex + 1 < e.Args.Length ? e.Args[rootIndex + 1] : null);
             MainWindow = window;
             ShutdownMode = ShutdownMode.OnMainWindowClose;
             window.Show();
@@ -39,7 +40,11 @@ namespace BD2PTBR.Installer
                     }
                 });
 
-                if (options.Action == InstallerAction.Uninstall)
+                if (options.Action == InstallerAction.Restore)
+                {
+                    report = engine.Restore(options.GameRoot, progress, options.ToEngineOptions());
+                }
+                else if (options.Action == InstallerAction.Uninstall)
                 {
                     report = engine.Uninstall(options.GameRoot, progress, options.ToEngineOptions());
                 }
@@ -80,6 +85,9 @@ namespace BD2PTBR.Installer
         public int FaultAfter { get; private set; }
         public bool SkipProcessCheck { get; private set; }
         public string StateRoot { get; private set; }
+        public string Payload { get; private set; }
+        public string PayloadHash { get; private set; }
+        public string ModVersion { get; private set; }
 
         public static CommandLineOptions Parse(IEnumerable<string> args)
         {
@@ -121,6 +129,9 @@ namespace BD2PTBR.Installer
                 {
                     result.StateRoot = Path.GetFullPath(values[++i]);
                 }
+                else if (value == "--payload" && i + 1 < values.Length) result.Payload = Path.GetFullPath(values[++i]);
+                else if (value == "--payload-sha256" && i + 1 < values.Length) result.PayloadHash = values[++i];
+                else if (value == "--mod-version" && i + 1 < values.Length) result.ModVersion = values[++i];
             }
 
             if (string.IsNullOrWhiteSpace(result.GameRoot))
@@ -136,7 +147,10 @@ namespace BD2PTBR.Installer
             {
                 FaultAfterFileOperations = FaultAfter,
                 SkipProcessCheck = SkipProcessCheck,
-                StateRootOverride = StateRoot
+                StateRootOverride = StateRoot,
+                PayloadPath = Payload,
+                ExpectedPayloadSha256 = PayloadHash,
+                ExpectedModVersion = ModVersion
             };
         }
     }

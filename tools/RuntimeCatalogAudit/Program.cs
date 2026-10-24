@@ -18,7 +18,7 @@ internal sealed class AuditRecord
 
 internal static class Program
 {
-	private const int ExpectedEffectiveRecords = 223743;
+	private const int ExpectedEffectiveRecords = 223731;
 
 	private static int Main(string[] args)
 	{
@@ -30,7 +30,7 @@ internal static class Program
 		}
 		string catalogDirectory = args.Length > 0
 			? Path.GetFullPath(args[0])
-			: Path.GetFullPath(Path.Combine(AppContext.BaseDirectory, "..", "..", "..", "..", "..", "catalog"));
+			: Path.GetFullPath(Path.Combine(AppContext.BaseDirectory, "..", "..", "..", "..", "..", "work", "release-catalog-v090"));
 		if (!Directory.Exists(catalogDirectory))
 		{
 			Console.Error.WriteLine("Catálogo não encontrado: " + catalogDirectory);

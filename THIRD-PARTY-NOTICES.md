@@ -8,6 +8,33 @@ O pacote público inclui o carregador **BepInEx 5.4.23.5 para Windows x64**, obt
 - SHA-256: `82F9878551030F54657792C0740D9D51A09500EEAE1FBA21106B0C441E6732C4`
 - Licença: MIT
 
-O texto integral da licença do BepInEx está incorporado ao instalador e também pode ser consultado no recurso `installer/BD2PTBR.Installer/Assets/BEPINEX-LICENSE.txt` deste repositório.
+O texto integral da licença MIT do BepInEx está incluído abaixo.
 
 HarmonyX, Mono.Cecil, MonoMod e as demais bibliotecas contidas na distribuição oficial do BepInEx conservam seus próprios avisos e licenças. Brown Dust 2, seus textos, nomes, personagens, artes e demais materiais pertencem aos respectivos titulares. O projeto não distribui executáveis, bancos de dados nem outros arquivos proprietários do jogo.
+
+
+BEPINEX 5.4.23.5
+Fonte: https://github.com/BepInEx/BepInEx/releases/download/v5.4.23.5/BepInEx_win_x64_5.4.23.5.zip
+SHA-256 do pacote oficial: 82F9878551030F54657792C0740D9D51A09500EEAE1FBA21106B0C441E6732C4
+
+MIT License
+
+Copyright (c) 2018 Bepis
+
+Permission is hereby granted, free of charge, to any person obtaining a copy
+of this software and associated documentation files (the "Software"), to deal
+in the Software without restriction, including without limitation the rights
+to use, copy, modify, merge, publish, distribute, sublicense, and/or sell
+copies of the Software, and to permit persons to whom the Software is
+furnished to do so, subject to the following conditions:
+
+The above copyright notice and this permission notice shall be included in all
+copies or substantial portions of the Software.
+
+THE SOFTWARE IS PROVIDED "AS IS", WITHOUT WARRANTY OF ANY KIND, EXPRESS OR
+IMPLIED, INCLUDING BUT NOT LIMITED TO THE WARRANTIES OF MERCHANTABILITY,
+FITNESS FOR A PARTICULAR PURPOSE AND NONINFRINGEMENT. IN NO EVENT SHALL THE
+AUTHORS OR COPYRIGHT HOLDERS BE LIABLE FOR ANY CLAIM, DAMAGES OR OTHER
+LIABILITY, WHETHER IN AN ACTION OF CONTRACT, TORT OR OTHERWISE, ARISING FROM,
+OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN THE
+SOFTWARE.

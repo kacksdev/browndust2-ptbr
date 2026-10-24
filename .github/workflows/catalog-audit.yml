@@ -20,7 +20,18 @@ jobs:
         uses: actions/setup-python@v7
         with:
           python-version: "3.12"
-      - name: Auditar catálogo
-        run: python tools/FullTranslator/audit_catalog.py
-      - name: Confirmar relatório reproduzível
-        run: git diff --exit-code -- catalog/audit-report.json
+      - name: Preparar .NET
+        uses: actions/setup-dotnet@v5
+        with:
+          dotnet-version: "8.0.x"
+      - name: Auditar estrutura e identidade do catálogo
+        run: python tools/audit_public_catalog.py
+      - name: Compilar auditor de marcadores do runtime
+        run: dotnet build tools/RuntimeCatalogAudit -c Release --nologo
+      - name: Auditar marcadores
+        shell: bash
+        run: |
+          count=$(python -c 'import json; print(json.load(open("catalog/manifest.json"))["expectedEffectiveEntries"])')
+          dotnet tools/RuntimeCatalogAudit/bin/Release/net8.0/BD2PTBR.RuntimeCatalogAudit.dll catalog "$count" > catalog/runtime-audit-report.json
+      - name: Confirmar relatórios reproduzíveis
+        run: git diff --exit-code -- catalog/audit-report.json catalog/runtime-audit-report.json

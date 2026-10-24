@@ -2,6 +2,10 @@
 
 As notas detalhadas de cada versão pública ficam na respectiva Release do GitHub. Este arquivo conserva os marcos principais.
 
+## 0.2.0: catálogo e atualizador universal
+
+Catálogo atualizado para o cliente de outubro, pacotes separados do aplicativo, canal HTTPS, compatibilidade verificada, backup e recuperação. Inclui abertura do Starter oficial e documentação permanente. [Notas e validação](./docs/RELEASE-NOTES-0.2.0.md).
+
 ## 0.1.1: instalador gráfico e distribuição corrigida
 
 - Substituição dos scripts públicos por um instalador gráfico único para Windows x64.

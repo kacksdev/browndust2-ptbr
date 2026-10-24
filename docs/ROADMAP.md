@@ -1,34 +1,14 @@
-# Roadmap público
+# Roadmap
 
-O projeto não atribui porcentagem de qualidade sem evidência. Cada marco avança a partir de catálogo auditado, testes no cliente e relatos reais.
+## Beta e manutenção incremental
 
-## 0.1.x: beta pública
+- Cobrir fontes novas ou alteradas sem refazer traduções preservadas.
+- Corrigir problemas confirmados de sentido, interface, instalação e compatibilidade.
+- Manter o atualizador universal com verificação, backup e recuperação.
+- Publicar compatibilidade somente após teste no cliente declarado.
 
-**Estado: atual**
+## Revisão editorial progressiva
 
-- Manter o instalador gráfico único, a verificação, o backup, o rollback, a remoção e a atualização simples.
-- Repetir a matriz automatizada e o teste de cliente limpo antes de cada distribuição.
-- Cobrir textos novos trazidos pelo cliente.
-- Corrigir travamentos, quebras de interface e regressões com prioridade máxima.
-- Incorporar correções contextuais confirmadas durante o uso.
-- Publicar compatibilidade somente após teste na versão indicada.
+Aprimorar narrativa e terminologia por contexto, preservando músicas, marcas e nomes que devem permanecer no original. A versão 1.0 fica reservada para maturidade editorial superior, sem data prometida ou porcentagem de qualidade sem evidência.
 
-## 0.x: revisão progressiva
-
-**Estado: contínuo, sem prazo anunciado**
-
-- Revisar narrativa por personagem, arco e sistema.
-- Corrigir traduções literais, termos inconsistentes e nomes inadequados.
-- Expandir amostragem real em história, eventos, combate, lojas, tutoriais e coleções.
-- Substituir entradas produzidas em escala por escolhas editoriais verificadas.
-- Preservar músicas, marcas, nomes próprios e elementos cuja tradução prejudique a identidade da obra.
-
-## 1.0.0: tradução integralmente revisada
-
-**Estado: futura**
-
-A versão 1.0.0 fica reservada para um catálogo integralmente revisado e contextualizado, com terminologia consistente, formatação correta, instalação estável, remoção segura e validação ampla dentro do jogo. Não existe data prometida.
-
-## Registro de mudanças
-
-O README mostra apenas o estado atual. Alterações de cada versão, correções e limitações específicas ficam nas respectivas [Releases](https://github.com/kacksdev/browndust2-ptbr/releases).
+Versão e alterações correntes ficam nas [Releases](https://github.com/kacksdev/browndust2-ptbr/releases). O README e o guia de instalação permanecem estáveis entre atualizações de catálogo.
