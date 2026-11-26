@@ -6,7 +6,7 @@
 2. Feche o jogo e o launcher.
 3. Na primeira instalação, baixe **BD2PTBR.exe** pela [Release oficial](https://github.com/kacksdev/browndust2-ptbr/releases/latest) e confira o SHA-256 publicado.
 4. Abra o aplicativo e confirme a pasta detectada ou clique em **Escolher pasta**.
-5. Use **Buscar atualização**. O aplicativo consulta o canal oficial e procura um pacote compatível com o cliente instalado.
+5. Use **Buscar atualização**. O aplicativo consulta o canal oficial, apresenta o catálogo disponível e confere a estrutura necessária para integrá-lo ao jogo.
 6. Quando o pacote aparecer, clique em **Instalar**, **Atualizar** ou **Reparar / Reinstalar**, conforme a opção exibida, e confirme o download e a aplicação.
 7. Aguarde a confirmação de conclusão e abra o jogo normalmente pelo launcher oficial.
 
@@ -28,7 +28,8 @@ O caminho mais comum termina em `BrownDust2_10000002`. Não selecione a pasta `B
 
 ## Ações disponíveis
 
-- **Buscar atualização**: consulta o [canal estável](https://raw.githubusercontent.com/kacksdev/browndust2-ptbr/main/updates/stable.json) e seleciona um pacote compatível; não instala por conta própria.
+- **Buscar atualização**: consulta o [canal estável](https://raw.githubusercontent.com/kacksdev/browndust2-ptbr/main/updates/stable.json) para encontrar atualizações do catálogo e do aplicativo; não instala por conta própria.
+- **Atualizar aplicativo**: aparece quando há um executável mais recente. Baixa, confere e substitui o aplicativo, preservando a versão anterior e reiniciando a interface.
 - **Instalar / Atualizar**: baixa e aplica o pacote compatível apresentado após sua confirmação.
 - **Reparar / Reinstalar**: reaplica a versão compatível já instalada, quando disponível no canal.
 - **Verificar**: compara os arquivos gerenciados da instalação com os hashes registrados. Essa verificação de integridade não certifica, sozinha, compatibilidade com um cliente novo.
@@ -41,9 +42,9 @@ Os detalhes técnicos podem ser abertos ou fechados pela seção **Detalhes da o
 
 A [Release atual](https://github.com/kacksdev/browndust2-ptbr/releases/latest) informa a versão, os clientes validados, as alterações e os hashes. O canal do atualizador informa os pacotes disponíveis, a compatibilidade exigida e a versão mínima do aplicativo. Não use números de versões antigas deste guia como autorização para instalar em outro cliente.
 
-O aplicativo confere a identidade do cliente antes do download e novamente antes de aplicar o pacote. O tamanho e o SHA-256 do download, o manifesto e os arquivos internos também são verificados. Um cliente candidato só deve ser anunciado como aprovado depois do teste real; compilar o pacote ou conferir hashes não substitui esse teste.
+O aplicativo confere as capacidades da integração antes do download e novamente antes de aplicar o pacote. A versão de referência do catálogo é informativa: um cliente mais novo pode receber o catálogo existente quando mantém a estrutura suportada. O tamanho e o SHA-256 do download, o manifesto e os arquivos internos também são verificados. A Release distingue o cliente efetivamente testado da compatibilidade reconhecida estruturalmente.
 
-Se não existir um pacote compatível, a instalação é bloqueada. Se a consulta ou o download falhar, não force arquivos antigos nem trate o aplicativo como instalador sem rede: preserve a instalação existente e consulte o [suporte](../SUPPORT.md).
+A instalação exige um catálogo disponível, download íntegro e integração reconhecida. Ela não é bloqueada apenas porque a versão do jogo é posterior à referência do catálogo. Se a estrutura essencial mudar ou a consulta falhar, o aplicativo informa o motivo e preserva a instalação existente. Consulte o [suporte](../SUPPORT.md) se necessário.
 
 ## Backup e reversão
 
@@ -70,13 +71,15 @@ Depois de abrir o jogo, consulte `BepInEx\LogOutput.log` dentro da pasta do jogo
 
 Compare a versão e as informações do catálogo exibidas no log com a Release correspondente. Uma mensagem isolada não comprova toda a tradução nem compatibilidade com futuras versões do jogo.
 
-Na tela inicial, o texto `TOUCH TO START` deve aparecer como `TOQUE PARA COMEÇAR`. Se o carregamento falhar ou houver um bloqueio de compatibilidade, não altere os arquivos manualmente para contorná-lo.
+Confira os textos dos menus e das telas carregadas após a entrada no jogo. Elementos incorporados em imagens podem permanecer no original. Se o carregamento falhar ou houver um bloqueio de integração, envie os detalhes ao suporte.
 
 ## Atualizar o mod
 
 Abra o mesmo **BD2PTBR.exe**, com o jogo e o launcher fechados, e use **Buscar atualização**. Confirme o pacote compatível apresentado. Não é necessário baixar outro instalador a cada atualização do catálogo.
 
-Uma mudança de segurança ou de protocolo do próprio aplicativo poderá exigir uma migração, informada pelo projeto na Release. Arquivos externos ao mod são preservados; alterações externas em arquivos gerenciados podem bloquear uma atualização ou restauração e precisam ser avaliadas antes de prosseguir.
+Quando **Atualizar aplicativo** aparecer, use essa ação para receber as melhorias da interface, do mecanismo de atualização e do ícone. O aplicativo prepara o novo executável, salva a versão anterior e reinicia; se a nova janela não confirmar a abertura, recupera a versão anterior. Aplicativos antigos sem esse mecanismo exigem uma migração inicial, descrita na Release. Atualizar o catálogo e atualizar o aplicativo são operações separadas.
+
+Arquivos externos ao mod são preservados; alterações externas em arquivos gerenciados podem bloquear uma atualização ou restauração e precisam ser avaliadas antes de prosseguir.
 
 ## Atualizar o jogo
 
@@ -86,7 +89,7 @@ Uma mudança de segurança ou de protocolo do próprio aplicativo poderá exigir
 4. Abra **BD2PTBR.exe** e use **Buscar atualização** para conferir se há pacote compatível com o novo cliente.
 5. Aplique somente o pacote oferecido para esse cliente. **Verificar** pode conferir a integridade dos arquivos do mod, mas não substitui a checagem de compatibilidade.
 
-O atualizador do mod não substitui o Starter oficial. Novos textos podem continuar em inglês até entrarem no catálogo publicado. Se o cliente mudou e não há pacote compatível, aguarde a avaliação do projeto; restaurar um backup antigo não torna esse cliente compatível.
+O atualizador do mod não substitui o Starter oficial. Novos textos podem continuar em inglês até entrarem no catálogo publicado. A atualização de conteúdo não invalida automaticamente o catálogo anterior; uma mudança real na integração pode exigir uma adaptação. Restaurar um backup antigo não desfaz a atualização oficial do jogo.
 
 Você também pode usar **Abrir Starter oficial** no BD2PTBR. O aplicativo localiza o Starter pelo registro do protocolo oficial do jogo, sem depender de uma unidade ou pasta fixa, e o abre com o argumento correto. O próprio Starter baixa a atualização e pode abrir o jogo ao terminar. O botão não instala o mod, não altera o protocolo do Windows e não substitui os controles oficiais. Se o Starter estiver ausente ou o registro estiver inválido, será exibida uma orientação para reparar a instalação oficial.
 
@@ -119,7 +122,7 @@ Clique em **Escolher pasta** e selecione a pasta que contém `BrownDust II.exe`.
 
 ### Não existe pacote compatível ou o canal está indisponível
 
-Confira a conexão e os avisos da Release. Não force um pacote de outro cliente e não substitua manualmente o feed ou os arquivos do jogo. A consulta pode falhar quando o canal ainda não foi disponibilizado ou estiver temporariamente indisponível. Envie a mensagem completa ao suporte se o problema persistir.
+Confira a conexão, a versão do aplicativo e os avisos da Release. Um aplicativo antigo pode exigir a migração indicada na Release. No atualizador vigente, a defasagem do catálogo é informativa; uma incompatibilidade estrutural ou falha de download é apresentada com seu motivo. Envie a mensagem completa ao suporte se o problema persistir.
 
 ### O jogo continua em inglês
 

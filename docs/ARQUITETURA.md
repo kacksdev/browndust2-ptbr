@@ -14,7 +14,9 @@ O plugin carrega os arquivos JSONL, verifica a quantidade mínima esperada e ins
 
 ## Atualização transacional
 
-BD2PTBR.exe é separado do payload. O canal oficial declara URL, tamanho, SHA-256, versão mínima do aplicativo e identidades de clientes aceitas. O aplicativo verifica o cliente antes de baixar e antes de aplicar, valida o conteúdo do ZIP e cria backups verificados antes de alterar arquivos gerenciados.
+BD2PTBR.exe é separado do payload. O canal oficial declara URL, tamanho, SHA-256, versão mínima do aplicativo, referência do cliente testado e perfil de integração. O perfil atual confere metadados das capacidades usadas pelo plugin, independentemente do número de versão ou pacote do cliente. O catálogo só aplica traduções a fontes correspondentes. Identidades exatas continuam registradas para transações e recuperação.
+
+O aplicativo valida o download e o conteúdo do ZIP e cria backups verificados antes de alterar arquivos gerenciados. O campo `launcher` do feed descreve separadamente o novo executável do aplicativo. Um auxiliar valida a identidade e o hash, espera o processo anterior terminar, substitui o arquivo com backup e aguarda a confirmação da nova janela; uma falha restaura a versão anterior.
 
 Jornais persistentes permitem recuperar uma operação interrompida. A restauração manual exige cliente e backups válidos; não reverte a versão oficial do jogo. Arquivos externos ao mod são preservados.
 

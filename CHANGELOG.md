@@ -2,6 +2,10 @@
 
 As notas detalhadas de cada versão pública ficam na respectiva Release do GitHub. Este arquivo conserva os marcos principais.
 
+## 0.3.0: catálogo e atualização do aplicativo
+
+7.994 entradas novas ou alteradas, compatibilidade por estruturas da integração em vez de versão exata do catálogo, atualização do próprio aplicativo e nova identidade visual. Inclui testes de recuperação e migração do aplicativo anterior. [Notas e validação](./docs/RELEASE-NOTES-0.3.0.md).
+
 ## 0.2.0: catálogo e atualizador universal
 
 Catálogo atualizado para o cliente de outubro, pacotes separados do aplicativo, canal HTTPS, compatibilidade verificada, backup e recuperação. Inclui abertura do Starter oficial e documentação permanente. [Notas e validação](./docs/RELEASE-NOTES-0.2.0.md).

@@ -1,0 +1,23 @@
+{
+  "asset": "kacks-hub-icon.png",
+  "sha256": "d1f92635777dd84926620ac77ca8ec6cc5bcd6fc4ee1f3f00dc6d0ee87cb035d",
+  "authorDirection": "Kacks",
+  "generation": "OpenAI image generation, built-in tool",
+  "approvedConcept": "Abstract three-form flowing symbol, monochrome, free silhouette and transparent openings.",
+  "finalAdjustment": "Replace the light-gray inner/reverse planes with deep HDR-style black while preserving the approved white faces and geometry.",
+  "outputUse": "Windows application icon",
+  "icoFrames": [
+    16,
+    20,
+    24,
+    32,
+    40,
+    48,
+    64,
+    128,
+    256
+  ],
+  "conversionTool": "tools/New-KacksInstallerIcon.ps1",
+  "date": "2026-11-26",
+  "prompt": "Edit this exact approved icon. Change ONLY the light-gray inner / reverse-facing planes of the three curved forms to a rich deep HDR-style BLACK: near-black surfaces with restrained charcoal highlights that preserve the folds and depth, dramatic black-and-white contrast. Keep all pearl-white front faces white and unchanged. Preserve the exact shape, proportions, orientation, three-form arrangement, tips, central negative space and framing. The background and all openings remain genuinely transparent; do not fill them black and do not add a backdrop, frame, badge or shadow. Production cleanup only: make the existing silhouette edges pristine and remove detached white fringe / speckled debris outside the actual emblem. Do not redesign, add elements, letters or text. Return the same freestanding abstract icon with deep black inner faces and white outer faces, ready as a clean transparent Windows icon master."
+}

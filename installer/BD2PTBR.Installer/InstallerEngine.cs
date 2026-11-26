@@ -13,7 +13,7 @@ namespace BD2PTBR.Installer
 {
     public sealed class InstallerEngine
     {
-        public const string InstallerVersion = "0.2.0";
+        public const string InstallerVersion = "0.3.0";
         private const string StateFileName = "install-state.json";
         private const string JournalFileName = "pending-transaction.json";
         private const string RestorePointFileName = "restore-point.json";

@@ -1,6 +1,7 @@
 using System;
 using System.Diagnostics;
 using System.IO;
+using System.Linq;
 using System.Threading;
 using System.Threading.Tasks;
 using System.Windows;
@@ -17,12 +18,14 @@ namespace BD2PTBR.Installer
         private bool _busy;
         private InstallationInspection _inspection;
         private UpdateRelease _release;
+        private LauncherRelease _launcherRelease;
 
         public MainWindow(string initialGameRoot = null)
         {
             InitializeComponent();
             ConfigureResponsiveWindow();
-            Loaded += async (_, __) => { await DetectAndInspectAsync(initialGameRoot); if (_inspection != null) await CheckUpdatesAsync(); };
+            AppVersionText.Text = "APLICATIVO " + InstallerEngine.InstallerVersion;
+            Loaded += async (_, __) => { await DetectAndInspectAsync(initialGameRoot); await CheckUpdatesAsync(); };
             Closing += (_, e) => { if (_busy) e.Cancel = true; };
         }
 
@@ -118,7 +121,7 @@ namespace BD2PTBR.Installer
                 PrimaryButton.Content = _release.modVersion == _inspection.ModVersion
                     ? "REPARAR / REINSTALAR"
                     : (installed ? "ATUALIZAR PARA " : "INSTALAR ") + _release.modVersion;
-                PrimaryButton.ToolTip = "Baixa e aplica o pacote compatível após sua confirmação.";
+                PrimaryButton.ToolTip = "Baixa e aplica o catálogo após conferir a integração e criar o backup.";
             }
             else
             {
@@ -128,7 +131,7 @@ namespace BD2PTBR.Installer
                     : "REINSTALAR TRADUÇÃO";
                 PrimaryButton.ToolTip = _inspection == null
                     ? "Escolha a pasta do jogo para consultar a compatibilidade."
-                    : "Use Buscar atualização para localizar um pacote compatível.";
+                    : "Use Buscar atualização para localizar o catálogo disponível.";
             }
             PrimaryButton.IsEnabled = !_busy && _inspection != null && _release != null;
         }
@@ -161,30 +164,59 @@ namespace BD2PTBR.Installer
 
         private async Task CheckUpdatesAsync()
         {
-            if (_busy || _inspection == null) return;
+            if (_busy) return;
             SetBusy(true);
             _release = null;
             UpdatePrimaryAction();
             SetStatus("CONSULTANDO ATUALIZAÇÕES", "Verificando o canal oficial e a compatibilidade deste cliente.", Brushes.White);
             try
             {
-                var root = _inspection.GameRoot;
-                _release = await new UpdateService().CheckAsync(root, CancellationToken.None);
+                var root = _inspection?.GameRoot;
+                UpdateAvailability available;
+                using (var service = new UpdateService()) available = await service.CheckAllAsync(root, CancellationToken.None);
+                _release = available.Mod;
+                _launcherRelease = available.Launcher;
+                UpdateAppButton.Visibility = _launcherRelease == null ? Visibility.Collapsed : Visibility.Visible;
+                UpdateAppButton.Content = _launcherRelease == null ? "ATUALIZAR APLICATIVO" : "ATUALIZAR APLICATIVO " + _launcherRelease.version;
                 Version installed;
                 if (_release != null && Version.TryParse(_inspection.ModVersion, out installed) && Version.Parse(_release.modVersion) < installed) _release = null;
-                if (_release == null)
+                if (_inspection == null)
                 {
-                    SetStatus("SEM PACOTE COMPATÍVEL", "Nenhuma atualização compatível está disponível neste canal. A instalação existente não foi alterada.", new SolidColorBrush(Color.FromRgb(229, 181, 84)));
+                    SetStatus("SELECIONE A PASTA DO JOGO", "Canal oficial consultado. Escolha a pasta do jogo para instalar o catálogo.", Brushes.White);
+                }
+                else if (_release == null)
+                {
+                    SetStatus("INSTALAÇÃO INDISPONÍVEL", available.CompatibilityMessage ?? "Nenhum catálogo está disponível no canal oficial. A instalação existente foi preservada.", new SolidColorBrush(Color.FromRgb(229, 181, 84)));
+                    CatalogReferenceText.Text = string.Empty;
                 }
                 else
                 {
                     bool same = _release.modVersion == _inspection.ModVersion;
-                    SetStatus(same ? "VERSÃO ATUAL DISPONÍVEL" : "ATUALIZAÇÃO COMPATÍVEL", "Mod " + _release.modVersion + ". O download só começa após sua confirmação.", Brushes.White);
-                    AddLog("Canal validado: mod " + _release.modVersion + "; cliente compatível.");
+                    var reference = _release.testedClientVersion ?? _release.compatibleClients?.FirstOrDefault()?.version;
+                    CatalogReferenceText.Text = string.IsNullOrEmpty(reference) ? string.Empty : "Catálogo atualizado até o cliente " + reference + ". Textos posteriores podem aparecer no original.";
+                    SetStatus(same ? "CATÁLOGO ATUAL DISPONÍVEL" : "CATÁLOGO DISPONÍVEL", "Mod " + _release.modVersion + ". O download só começa após sua confirmação.", Brushes.White);
+                    AddLog("Canal validado: mod " + _release.modVersion + "; referência do catálogo " + reference + ". A data do catálogo não bloqueia uma integração reconhecida.");
                 }
+                if (_launcherRelease != null) AddLog("Nova versão do aplicativo disponível: " + _launcherRelease.version + ". Use Atualizar aplicativo para receber as melhorias e o ícone.");
             }
-            catch (Exception error) { PresentFailure(OperationReport.Failure("CheckUpdate", _inspection.GameRoot, error)); }
-            finally { SetBusy(false, true); UpdatePrimaryAction(); RestoreButton.IsEnabled = _inspection.CanRestore; }
+            catch (Exception error) { PresentFailure(OperationReport.Failure("CheckUpdate", _inspection?.GameRoot, error)); }
+            finally { SetBusy(false, true); UpdatePrimaryAction(); RestoreButton.IsEnabled = _inspection?.CanRestore == true; }
+        }
+
+        private async void UpdateApp_OnClick(object sender, RoutedEventArgs e)
+        {
+            if (_busy || _launcherRelease == null) return;
+            if (MessageBox.Show("Atualizar o aplicativo para " + _launcherRelease.version + "? Ele será reiniciado; os arquivos do mod não serão alterados por esta operação.", "Atualização do aplicativo", MessageBoxButton.YesNo, MessageBoxImage.Question) != MessageBoxResult.Yes) return;
+            SetBusy(true);
+            try
+            {
+                string download;
+                using (var service = new UpdateService()) download = await service.DownloadLauncherAsync(_launcherRelease, new Progress<InstallerProgress>(UpdateProgress), CancellationToken.None);
+                await LauncherSelfUpdate.StageAsync(download, _launcherRelease, _inspection?.GameRoot, CancellationToken.None);
+                SetBusy(false, true);
+                Application.Current.Shutdown();
+            }
+            catch (Exception error) { PresentFailure(OperationReport.Failure("UpdateApplication", _inspection?.GameRoot, error)); SetBusy(false, true); }
         }
 
         private async void Restore_OnClick(object sender, RoutedEventArgs e)
@@ -309,6 +341,7 @@ namespace BD2PTBR.Installer
                 if (picker.ShowDialog() == Forms.DialogResult.OK)
                 {
                     await DetectAndInspectAsync(picker.SelectedPath);
+                    await CheckUpdatesAsync();
                 }
             }
         }
@@ -318,7 +351,8 @@ namespace BD2PTBR.Installer
             _busy = busy;
             BrowseButtonState(!busy);
             StarterButton.IsEnabled = !busy;
-            CheckUpdatesButton.IsEnabled = !busy && _inspection != null;
+            CheckUpdatesButton.IsEnabled = !busy;
+            UpdateAppButton.IsEnabled = !busy && _launcherRelease != null;
             if (busy)
             {
                 PrimaryButton.IsEnabled = false;

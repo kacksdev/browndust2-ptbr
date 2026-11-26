@@ -30,4 +30,4 @@ Os scripts históricos Build-Installer, Build-Release, Install-Local e Test-Inst
 
 ## Publicação
 
-Depois dos gates, publique os artefatos na Release, confira tamanho e SHA-256 por download e só então atualize `updates/stable.json`. Mantenha o README e a página do GameBanana permanentes; alterações específicas, cobertura e compatibilidade ficam na Release e no feed. Uma mudança no próprio aplicativo pode exigir migração excepcional.
+Depois dos gates, publique os artefatos na Release, confira tamanho e SHA-256 por download e só então atualize `updates/stable.json`. Mantenha o README e a página do GameBanana permanentes; alterações específicas, cobertura e compatibilidade ficam na Release e no feed. O feed mantém a atualização do catálogo separada da atualização do aplicativo. O campo `launcher` informa versão, URL, tamanho e SHA-256 do executável. Cada pacote declara `integrationProfile`, versão mínima do aplicativo e a referência do cliente testado; a estrutura suportada é conferida antes da aplicação. Aplicativos antigos sem atualização própria podem exigir uma migração inicial.

@@ -21,6 +21,16 @@ internal static class Program
     {
         try
         {
+            if (args.Length == 1 && args[0] == "--open-official-starter") { Console.WriteLine(OfficialStarter.Open()); return 0; }
+            if (args.Length == 2 && args[0] == "--probe") { Console.WriteLine(IntegrationCompatibility.Inspect(args[1])); return 0; }
+            if (args.Length == 2 && args[0] == "--self-update-bootstrap")
+            {
+                var source = Path.GetFullPath(args[1]);
+                var version = System.Reflection.AssemblyName.GetAssemblyName(source).Version.ToString(3);
+                var release = new LauncherRelease { version = version, url = "https://github.com/kacksdev/browndust2-ptbr/releases/download/v" + version + "/BD2PTBR.exe", bytes = new FileInfo(source).Length, sha256 = Hashing.Sha256(source) };
+                LauncherSelfUpdate.StageAsync(source, release, null, CancellationToken.None).GetAwaiter().GetResult();
+                Console.WriteLine("SELF_UPDATE_STAGED"); return 0;
+            }
             Root = Path.GetFullPath(args[0]);
             if (Directory.Exists(Root)) throw new IOException("Test output must be new.");
             Directory.CreateDirectory(Root);
@@ -202,6 +212,7 @@ internal static class Program
                 File.WriteAllText(Path.Combine(g,Plugin),"partial-write"); File.AppendAllText(Path.Combine(g,"BrownDust II_Data/Managed/Assembly-CSharp.dll"),"changed-client");
                 Reject(()=>Engine.Inspect(g,a)); Assert(File.ReadAllText(Path.Combine(g,Plugin))=="partial-write"); Assert(File.Exists(Path.Combine(instance,"pending-transaction.json")));
             });
+            NewFlowTests.Run(Path.Combine(Root, "new-flow"), Run);
             File.WriteAllText(Path.Combine(Root,"test-summary.json"),JsonStorage.Serialize(new TestSummary { result="PASS", scenarios=Passed, gameModified=false, realClientTested=false }),new UTF8Encoding(false));
             Console.WriteLine("PASS " + Passed + " scenarios. " + Root); return 0;
         }
@@ -237,12 +248,12 @@ internal static class Program
         File.WriteAllText(Path.Combine(g,"UnityPlayer.dll"),"fake-unity");
         File.WriteAllText(Path.Combine(g,"BrownDust II_Data/globalgamemanagers"),"synthetic 2.36.7\0"); File.WriteAllText(Path.Combine(g,"20261002000.tied.dat"),"fake-package"); return g;
     }
-    static InstallerEngineOptions Package(string game, string version, string extra=null, bool incomplete=false) {
+    internal static InstallerEngineOptions Package(string game, string version, string extra=null, bool incomplete=false, string integrationProfile=null) {
         var path=Path.Combine(Path.GetDirectoryName(game),"payload-"+version+"-"+Guid.NewGuid().ToString("N")+".zip");
         var content=new Dictionary<string,string>{{Plugin,"plugin-"+version},{"winhttp.dll","synthetic-loader"},{"BepInEx/plugins/BD2PTBR/translations/complete.jsonl","synthetic-catalog-"+version}};
         if (!incomplete) foreach(var required in new[]{"doorstop_config.ini","BepInEx/core/BepInEx.dll","BepInEx/core/BepInEx.Preloader.dll","BepInEx/core/0Harmony.dll","BepInEx/plugins/BD2PTBR/translations/hardcoded.jsonl"}) content[required]="synthetic-"+required;
         if(extra!=null)content.Add(extra,"not-allowed");
-        var manifest=new PayloadManifest{schemaVersion=3,modVersion=version,testedClientVersion="2.36.7",testedGamePackage="20261002000",compatibleClients=new List<ClientIdentity>{GameCompatibility.Capture(game)},files=content.Select(p=>new PayloadFile{path=p.Key,bytes=Encoding.UTF8.GetByteCount(p.Value),sha256=Hashing.Sha256Text(p.Value)}).ToList()};
+        var manifest=new PayloadManifest{schemaVersion=3,integrationProfile=integrationProfile,modVersion=version,testedClientVersion="2.36.7",testedGamePackage="20261002000",compatibleClients=new List<ClientIdentity>{GameCompatibility.Capture(game)},files=content.Select(p=>new PayloadFile{path=p.Key,bytes=Encoding.UTF8.GetByteCount(p.Value),sha256=Hashing.Sha256Text(p.Value)}).ToList()};
         using(var zip=ZipFile.Open(path,ZipArchiveMode.Create)) {
             using(var w=new StreamWriter(zip.CreateEntry("payload-manifest.json").Open(),new UTF8Encoding(false)))w.Write(JsonStorage.Serialize(manifest));
             foreach(var item in content)using(var w=new StreamWriter(zip.CreateEntry(item.Key).Open(),new UTF8Encoding(false)))w.Write(item.Value);

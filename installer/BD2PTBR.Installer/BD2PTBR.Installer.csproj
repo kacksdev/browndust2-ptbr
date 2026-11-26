@@ -7,10 +7,11 @@
     <ApplicationIcon>Assets\kacks-installer.ico</ApplicationIcon>
     <RootNamespace>BD2PTBR.Installer</RootNamespace>
     <ApplicationManifest>app.manifest</ApplicationManifest>
-    <Version>0.2.0</Version>
-    <FileVersion>0.2.0.0</FileVersion>
-    <AssemblyVersion>0.2.0.0</AssemblyVersion>
+    <Version>0.3.0</Version>
+    <FileVersion>0.3.0.0</FileVersion>
+    <AssemblyVersion>0.3.0.0</AssemblyVersion>
     <Deterministic>true</Deterministic>
+    <IncludeSourceRevisionInInformationalVersion>false</IncludeSourceRevisionInInformationalVersion>
     <LangVersion>latest</LangVersion>
     <Nullable>disable</Nullable>
     <PlatformTarget>x64</PlatformTarget>
@@ -37,6 +38,8 @@
   </ItemGroup>
 
   <ItemGroup>
+    <PackageReference Include="Mono.Cecil" Version="0.11.6" GeneratePathProperty="true" PrivateAssets="all" />
+    <EmbeddedResource Include="$(PkgMono_Cecil)/lib/net40/Mono.Cecil.dll" LogicalName="BD2PTBR.Metadata.Mono.Cecil.dll" />
     <PackageReference Include="Microsoft.NETFramework.ReferenceAssemblies.net472"
                       Version="1.0.3"
                       PrivateAssets="all" />
