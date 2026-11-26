@@ -7,9 +7,9 @@
     <ApplicationIcon>Assets\kacks-installer.ico</ApplicationIcon>
     <RootNamespace>BD2PTBR.Installer</RootNamespace>
     <ApplicationManifest>app.manifest</ApplicationManifest>
-    <Version>0.3.0</Version>
-    <FileVersion>0.3.0.0</FileVersion>
-    <AssemblyVersion>0.3.0.0</AssemblyVersion>
+    <Version>0.3.1</Version>
+    <FileVersion>0.3.1.0</FileVersion>
+    <AssemblyVersion>0.3.1.0</AssemblyVersion>
     <Deterministic>true</Deterministic>
     <IncludeSourceRevisionInInformationalVersion>false</IncludeSourceRevisionInInformationalVersion>
     <LangVersion>latest</LangVersion>
