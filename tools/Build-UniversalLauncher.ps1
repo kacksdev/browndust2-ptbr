@@ -11,6 +11,8 @@ if ($LASTEXITCODE -ne 0) { throw 'Falha ao compilar o atualizador.' }
 New-Item -ItemType Directory -Path $output | Out-Null
 $executable = Join-Path $output 'BD2PTBR.exe'
 Copy-Item -LiteralPath (Join-Path $repository 'installer\BD2PTBR.Installer\bin\Release\net472\BD2PTBR-Installer.exe') -Destination $executable
+& python (Join-Path $repository 'tools\audit_executable_icon.py') $executable (Join-Path $repository 'installer\BD2PTBR.Installer\Assets\kacks-installer.ico') --report (Join-Path $output 'icon-audit.json')
+if ($LASTEXITCODE -ne 0) { throw 'O ícone nativo do executável diverge do arquivo aprovado.' }
 $metadata = [ordered]@{
     schemaVersion = 1
     launcherVersion = [Diagnostics.FileVersionInfo]::GetVersionInfo($executable).ProductVersion

@@ -43,6 +43,10 @@ jobs:
     steps:
       - name: Obter repositório
         uses: actions/checkout@v7
+      - name: Preparar Python
+        uses: actions/setup-python@v7
+        with:
+          python-version: "3.12"
       - name: Preparar .NET
         uses: actions/setup-dotnet@v5
         with:
@@ -50,6 +54,11 @@ jobs:
       - name: Compilar aplicativo universal
         shell: pwsh
         run: pwsh -File tools/Build-UniversalLauncher.ps1 -OutputRoot dist/ci-launcher
+      - name: Conferir ícones e data do ZIP de distribuição
+        shell: pwsh
+        run: |
+          pwsh -File tools/New-LauncherArchive.ps1 -Executable dist/ci-launcher/BD2PTBR.exe -OutputZip dist/ci-launcher/BD2PTBR.zip
+          python tools/audit_executable_icon.py dist/ci-launcher/BD2PTBR.zip installer/BD2PTBR.Installer/Assets/kacks-installer.ico --report dist/ci-launcher/zip-icon-audit.json
       - name: Testar atualização e recuperação em fixtures
         shell: pwsh
         run: dotnet run --project tools/UpdaterTests -c Release -- "$env:RUNNER_TEMP\bd2-updater-tests"
