@@ -2,34 +2,42 @@
   "schemaVersion": 1,
   "releases": [
     {
-      "modVersion": "0.2.0",
+      "modVersion": "0.3.0",
       "minimumLauncherVersion": "0.2.0",
-      "url": "https://github.com/kacksdev/browndust2-ptbr/releases/download/v0.2.0/BD2PTBR-payload-0.2.0.zip",
-      "bytes": 25157669,
-      "sha256": "2B462B3FF5C9EAED07BF75FE1D0EAF739D187B02B278DAC9679153D2B1D51A7D",
+      "integrationProfile": "bd2-mono-x64-source-bound-v1",
+      "testedClientVersion": "2.39.10",
+      "url": "https://github.com/kacksdev/browndust2-ptbr/releases/download/v0.3.0/BD2PTBR-payload-0.3.0.zip",
+      "bytes": 25936859,
+      "sha256": "3C4C93CB4D8E4C3BA1089AB1A64BDEE5185AF878DAB259886581125CBA841856",
       "compatibleClients": [
         {
-          "package": "20261023000",
-          "version": "2.37.13",
+          "package": "20261113000",
+          "version": "2.39.10",
           "files": [
             {
               "path": "BrownDust II.exe",
               "bytes": 677512,
-              "sha256": "B1EC590CB525ADADFFF764EE10F2E72173BEBC3EACE3E8306EAC5357CB2C167F"
+              "sha256": "B91A5BAC1777820F0C50810B8226EF17B3EB68C163ED6207C555FA8A0F847C35"
             },
             {
               "path": "BrownDust II_Data/Managed/Assembly-CSharp.dll",
-              "bytes": 51941376,
-              "sha256": "B6A58CD7188F348043182411772C545761B40499DDEBE6793B4F25E66C68D33E"
+              "bytes": 52397568,
+              "sha256": "C97848B4987E0189DB1264B30EB87C6A1E46BD1D671A7E056A550B51B88CE210"
             },
             {
               "path": "BrownDust II_Data/globalgamemanagers",
-              "bytes": 1198396,
-              "sha256": "A68AE91EF63834B390C7F500D6E760FB4CF5D765D77BF3957392217E72FF442E"
+              "bytes": 1201924,
+              "sha256": "02A2790DD0CBAFDA5C27C86AC04B339D64A4CAA2CA6CB025B87E7A7CBDA82982"
             }
           ]
         }
       ]
     }
-  ]
+  ],
+  "launcher": {
+    "version": "0.3.0",
+    "url": "https://github.com/kacksdev/browndust2-ptbr/releases/download/v0.3.0/BD2PTBR.exe",
+    "bytes": 2410496,
+    "sha256": "62A2D7E323737D72CF0E36DDE1620B6D54FA64DD26BAB98876BD12A37FBDCC07"
+  }
 }
