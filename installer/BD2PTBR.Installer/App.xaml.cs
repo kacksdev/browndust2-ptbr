@@ -12,6 +12,12 @@ namespace BD2PTBR.Installer
         protected override void OnStartup(StartupEventArgs e)
         {
             base.OnStartup(e);
+            if (e.Args.Length == 2 && e.Args[0] == "--apply-launcher-update")
+            {
+                try { LauncherSelfUpdate.Apply(e.Args[1]); Shutdown(0); }
+                catch (Exception error) { MessageBox.Show(error.Message, "Atualização do aplicativo", MessageBoxButton.OK, MessageBoxImage.Warning); Shutdown(1); }
+                return;
+            }
             if (e.Args.Any(arg => string.Equals(arg, "--headless", StringComparison.OrdinalIgnoreCase)))
             {
                 RunHeadless(e.Args);
@@ -20,6 +26,14 @@ namespace BD2PTBR.Installer
 
             var rootIndex = Array.FindIndex(e.Args, value => value == "--game-root");
             var window = new MainWindow(rootIndex >= 0 && rootIndex + 1 < e.Args.Length ? e.Args[rootIndex + 1] : null);
+            var receiptIndex = Array.FindIndex(e.Args, value => value == "--launcher-update-receipt");
+            if (receiptIndex >= 0 && receiptIndex + 1 < e.Args.Length)
+            {
+                window.ContentRendered += (_, __) => {
+                    try { LauncherSelfUpdate.ConfirmOpened(e.Args[receiptIndex + 1]); }
+                    catch (Exception error) { MessageBox.Show(error.Message, "Atualização não confirmada", MessageBoxButton.OK, MessageBoxImage.Warning); Shutdown(1); }
+                };
+            }
             MainWindow = window;
             ShutdownMode = ShutdownMode.OnMainWindowClose;
             window.Show();

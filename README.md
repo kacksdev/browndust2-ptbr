@@ -25,9 +25,9 @@ Projeto criado, dirigido, mantido e validado por **Kacks**, sem afiliação, pat
 
 A [Release atual](https://github.com/kacksdev/browndust2-ptbr/releases/latest) é a referência para versão, alterações, clientes validados, cobertura e hashes. O [canal estável do atualizador](https://raw.githubusercontent.com/kacksdev/browndust2-ptbr/main/updates/stable.json) informa os pacotes disponíveis e seus requisitos. O histórico fica nas [Releases](https://github.com/kacksdev/browndust2-ptbr/releases), sem exigir a reescrita desta página a cada atualização.
 
-O aplicativo consulta o canal oficial do projeto e confere a identificação do cliente instalado antes de aplicar um pacote. Se não existir uma atualização compatível, ele informa o bloqueio e preserva a instalação existente.
+O aplicativo consulta o canal oficial, informa até qual versão do jogo o catálogo foi atualizado e confere a estrutura necessária para integrar a tradução. Um catálogo defasado continua instalável quando essa integração é reconhecida; textos novos ou alterados sem correspondência permanecem no original.
 
-Essa verificação não promete compatibilidade com qualquer versão futura do jogo. Atualizações oficiais podem acrescentar textos ou modificar a integração e precisam ser avaliadas pelo projeto.
+Atualizações de conteúdo e mudanças na integração são tratadas separadamente. Se uma atualização modificar uma estrutura essencial do cliente, poderá ser necessária uma adaptação do mod. A versão do catálogo, sozinha, não é motivo para impedir a instalação.
 
 ## 03 / INSTALAR OU ATUALIZAR
 
@@ -37,7 +37,7 @@ Essa verificação não promete compatibilidade com qualquer versão futura do j
 4. Use **Buscar atualização**, selecione **Instalar**, **Atualizar** ou **Reparar / Reinstalar** quando o pacote compatível aparecer e confirme a operação.
 5. Aguarde a confirmação da operação e abra o jogo normalmente pelo launcher oficial.
 
-Nas próximas atualizações do mod, abra o mesmo aplicativo e use **Buscar atualização**. Não é necessário baixar outro instalador para cada atualização do catálogo. Uma mudança de segurança ou de protocolo do próprio aplicativo poderá exigir uma migração, informada pelo projeto.
+Nas próximas atualizações, abra o mesmo aplicativo e use **Buscar atualização**. O catálogo é instalado pelo botão principal. Quando houver uma nova versão do próprio aplicativo, aparece **Atualizar aplicativo**; ele baixa o novo executável, preserva a versão anterior e reinicia. A migração de aplicativos antigos que ainda não possuem essa função é explicada na Release.
 
 É necessária conexão com a internet para consultar o canal e baixar os pacotes por HTTPS do GitHub. A consulta não inicia o download sem sua confirmação.
 

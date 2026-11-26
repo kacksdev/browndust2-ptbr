@@ -17,7 +17,7 @@ if (Test-Path -LiteralPath (Join-Path $payload 'payload-manifest.json')) { throw
 $plugin = Join-Path $payload 'BepInEx\plugins\BD2PTBR\BD2PTBR.dll'
 if (-not (Test-Path -LiteralPath $plugin)) { throw 'Plugin compilado ausente.' }
 if ([Reflection.AssemblyName]::GetAssemblyName($plugin).Version.ToString(3) -ne $ModVersion) { throw 'Versão do plugin difere da versão solicitada.' }
-$files = @(Get-ChildItem -LiteralPath $payload -Recurse -File)
+$files = @(Get-ChildItem -LiteralPath $payload -Recurse -File | Sort-Object FullName)
 $records = foreach ($file in $files) {
     $relative = $file.FullName.Substring($payload.Length).TrimStart('\').Replace('\','/')
     if ($relative -notmatch '^(winhttp\.dll|doorstop_config\.ini|\.doorstop_version|changelog\.txt|BepInEx/core/[^:]+|BepInEx/plugins/BD2PTBR/[^:]+|BepInEx/config/BD2PTBR\.cfg)$') { throw "Arquivo fora do escopo do mod: $relative" }
@@ -43,7 +43,7 @@ $package = Get-ChildItem -LiteralPath $game -File -Filter '*.tied.dat' | Sort-Ob
 if (-not $package -or -not $clientVersion) { throw 'Identidade do cliente incompleta.' }
 $packageId = $package.Name -replace '\.tied\.dat$', ''
 $identity = [ordered]@{ package=$packageId; version=$clientVersion; files=@($identityFiles) }
-$manifest = [ordered]@{ schemaVersion=3; modVersion=$ModVersion; testedClientVersion=$clientVersion; testedGamePackage=$packageId; compatibleClients=@($identity); files=@($records) }
+$manifest = [ordered]@{ schemaVersion=3; modVersion=$ModVersion; testedClientVersion=$clientVersion; testedGamePackage=$packageId; integrationProfile='bd2-mono-x64-source-bound-v1'; compatibleClients=@($identity); files=@($records) }
 New-Item -ItemType Directory -Path $output | Out-Null
 Add-Type -AssemblyName System.IO.Compression
 Add-Type -AssemblyName System.IO.Compression.FileSystem
@@ -51,12 +51,19 @@ $zipPath = Join-Path $output "BD2PTBR-payload-$ModVersion.zip"
 $encoding = [Text.UTF8Encoding]::new($false)
 $zip = [IO.Compression.ZipFile]::Open($zipPath, [IO.Compression.ZipArchiveMode]::Create)
 try {
-    foreach ($record in $records) { [IO.Compression.ZipFileExtensions]::CreateEntryFromFile($zip, (Join-Path $payload $record.path), $record.path, [IO.Compression.CompressionLevel]::Optimal) | Out-Null }
+    foreach ($record in $records) {
+        $fileEntry = $zip.CreateEntry($record.path, [IO.Compression.CompressionLevel]::Optimal)
+        $fileEntry.LastWriteTime = [DateTimeOffset]::new(2000, 1, 1, 0, 0, 0, [TimeSpan]::Zero)
+        $inputStream = [IO.File]::OpenRead((Join-Path $payload $record.path))
+        $outputStream = $fileEntry.Open()
+        try { $inputStream.CopyTo($outputStream) } finally { $outputStream.Dispose(); $inputStream.Dispose() }
+    }
     $entry = $zip.CreateEntry('payload-manifest.json')
+    $entry.LastWriteTime = [DateTimeOffset]::new(2000, 1, 1, 0, 0, 0, [TimeSpan]::Zero)
     $writer = [IO.StreamWriter]::new($entry.Open(), $encoding)
     try { $writer.Write(($manifest | ConvertTo-Json -Depth 10)) } finally { $writer.Dispose() }
 } finally { $zip.Dispose() }
-$release = [ordered]@{ modVersion=$ModVersion; minimumLauncherVersion='0.2.0'; url="https://github.com/kacksdev/browndust2-ptbr/releases/download/v$ModVersion/$([IO.Path]::GetFileName($zipPath))"; bytes=(Get-Item -LiteralPath $zipPath).Length; sha256=(Get-FileHash -LiteralPath $zipPath -Algorithm SHA256).Hash; compatibleClients=@($identity) }
+$release = [ordered]@{ modVersion=$ModVersion; minimumLauncherVersion='0.2.0'; integrationProfile='bd2-mono-x64-source-bound-v1'; testedClientVersion=$clientVersion; url="https://github.com/kacksdev/browndust2-ptbr/releases/download/v$ModVersion/$([IO.Path]::GetFileName($zipPath))"; bytes=(Get-Item -LiteralPath $zipPath).Length; sha256=(Get-FileHash -LiteralPath $zipPath -Algorithm SHA256).Hash; compatibleClients=@($identity) }
 if ($release.bytes -gt 512MB) { throw 'O arquivo excede o limite de download do atualizador.' }
 [IO.File]::WriteAllText((Join-Path $output 'release-candidate.json'), ($release | ConvertTo-Json -Depth 10), $encoding)
 [IO.File]::WriteAllText((Join-Path $output 'CANDIDATE-NOT-PUBLISHED.txt'), 'Este pacote ainda exige auditoria do catalogo, QA editorial autorizado e validacao no cliente real. Nao publicar este arquivo como feed antes desses gates.', $encoding)

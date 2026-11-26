@@ -35,3 +35,21 @@ jobs:
           dotnet tools/RuntimeCatalogAudit/bin/Release/net8.0/BD2PTBR.RuntimeCatalogAudit.dll catalog "$count" > catalog/runtime-audit-report.json
       - name: Confirmar relatórios reproduzíveis
         run: git diff --exit-code -- catalog/audit-report.json catalog/runtime-audit-report.json
+
+  updater:
+    name: Atualizador Windows
+    runs-on: windows-latest
+    timeout-minutes: 15
+    steps:
+      - name: Obter repositório
+        uses: actions/checkout@v7
+      - name: Preparar .NET
+        uses: actions/setup-dotnet@v5
+        with:
+          dotnet-version: "8.0.x"
+      - name: Compilar aplicativo universal
+        shell: pwsh
+        run: pwsh -File tools/Build-UniversalLauncher.ps1 -OutputRoot dist/ci-launcher
+      - name: Testar atualização e recuperação em fixtures
+        shell: pwsh
+        run: dotnet run --project tools/UpdaterTests -c Release -- "$env:RUNNER_TEMP\bd2-updater-tests"

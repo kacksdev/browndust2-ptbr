@@ -95,6 +95,8 @@ namespace BD2PTBR.Installer
         public List<PayloadFile> files { get; set; }
         [DataMember(Name = "compatibleClients")]
         public List<ClientIdentity> compatibleClients { get; set; }
+        [DataMember(Name = "integrationProfile", EmitDefaultValue = false)]
+        public string integrationProfile { get; set; }
     }
 
     [DataContract]

@@ -8,7 +8,8 @@ Versão, cliente testado, resultados e limitações de cada distribuição ficam
 - Catálogo consolidado, sem camadas obsoletas capazes de sobrescrever as traduções atuais.
 - Verificação de JSON, chaves únicas, fonte, Unicode, músicas protegidas e hashes.
 - Marcadores conferidos pelo mesmo PlaceholderValidator.cs usado pelo runtime.
-- Testes do atualizador: compatibilidade, downloads, arquivos externos, migração legada, transações interrompidas, rollback e restauração.
+- Testes do atualizador: compatibilidade por capacidades, catálogos defasados em clientes posteriores, downloads, arquivos externos, migração legada, transações interrompidas, rollback e restauração.
+- Atualização do próprio aplicativo separada do catálogo, com executável verificado, backup, reinício e recuperação de falhas.
 - Teste do artefato empacotado e execução real no cliente declarado antes da liberação.
 
 Os relatórios públicos reproduzíveis são [audit-report.json](../catalog/audit-report.json) e [runtime-audit-report.json](../catalog/runtime-audit-report.json). Consulte [Compilação e testes](./COMPILACAO.md).

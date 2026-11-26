@@ -15,9 +15,9 @@ Remova nomes de usuário, caminhos pessoais e outras informações privadas ante
 
 ## Antes de tentar novamente
 
-Conclua a atualização pelo Starter oficial e os downloads adicionais do jogo. Depois, feche o jogo e o launcher e abra o mesmo **BD2PTBR.exe**. Use **Buscar atualização** para conferir se existe pacote compatível. Não é necessário baixar outro instalador para cada atualização do catálogo; uma migração do próprio aplicativo será informada pelo projeto.
+Conclua a atualização pelo Starter oficial e os downloads adicionais do jogo. Depois, feche o jogo e o launcher e abra o mesmo **BD2PTBR.exe**. Use **Buscar atualização** para conferir se existe pacote compatível. Não é necessário baixar outro instalador para cada atualização do catálogo. Quando houver uma versão nova do aplicativo, use **Atualizar aplicativo**. Aplicativos antigos sem esse mecanismo precisam da migração inicial indicada na Release.
 
-O aplicativo usa a internet para consultar o canal e baixar os pacotes por HTTPS do GitHub. Se houver falha de rede, canal indisponível ou ausência de pacote compatível, registre a mensagem e preserve a instalação. Não force um pacote antigo nem altere o feed para contornar o bloqueio.
+O aplicativo usa a internet para consultar o canal e baixar os pacotes por HTTPS do GitHub. Se houver falha de rede, canal indisponível ou ausência de pacote compatível, registre a mensagem e preserve a instalação. Um catálogo defasado pode continuar instalável quando a integração é reconhecida; a versão de referência não é um prazo de validade. Não altere o feed ou arquivos do jogo para contornar um impedimento estrutural.
 
 **Verificar** confere os hashes dos arquivos gerenciados; não certifica compatibilidade com uma atualização nova do jogo. **Reparar / Reinstalar** depende de um pacote compatível disponível no canal. Uma consulta bem-sucedida, um hash correto ou uma compilação não substituem o teste real de uma versão candidata.
 

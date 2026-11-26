@@ -40,7 +40,14 @@ namespace BD2PTBR.Installer
                     throw new InvalidDataException("Este pacote antigo não foi validado para o cliente instalado. Busque uma atualização compatível.");
                 return;
             }
-            EnsureAnyIdentity(root, manifest.compatibleClients);
+            EnsureCatalogCompatible(root, manifest.compatibleClients, manifest.integrationProfile);
+        }
+
+        public static void EnsureCatalogCompatible(string root, IList<ClientIdentity> identities, string profile)
+        {
+            if (string.IsNullOrEmpty(profile)) { EnsureAnyIdentity(root, identities); return; }
+            if (profile != IntegrationCompatibility.Profile) throw new InvalidDataException("Perfil de integração não suportado. Atualize o aplicativo.");
+            IntegrationCompatibility.Inspect(root);
         }
 
         public static void EnsureAnyIdentity(string root, IList<ClientIdentity> identities)

@@ -15,6 +15,7 @@ namespace BD2PTBR.Installer
     {
         [DataMember(Name = "schemaVersion")] public int schemaVersion { get; set; }
         [DataMember(Name = "releases")] public List<UpdateRelease> releases { get; set; }
+        [DataMember(Name = "launcher", EmitDefaultValue = false)] public LauncherRelease launcher { get; set; }
     }
 
     [DataContract]
@@ -26,6 +27,24 @@ namespace BD2PTBR.Installer
         [DataMember(Name = "bytes")] public long bytes { get; set; }
         [DataMember(Name = "sha256")] public string sha256 { get; set; }
         [DataMember(Name = "compatibleClients")] public List<ClientIdentity> compatibleClients { get; set; }
+        [DataMember(Name = "integrationProfile", EmitDefaultValue = false)] public string integrationProfile { get; set; }
+        [DataMember(Name = "testedClientVersion", EmitDefaultValue = false)] public string testedClientVersion { get; set; }
+    }
+
+    [DataContract]
+    internal sealed class LauncherRelease
+    {
+        [DataMember(Name = "version")] public string version { get; set; }
+        [DataMember(Name = "url")] public string url { get; set; }
+        [DataMember(Name = "bytes")] public long bytes { get; set; }
+        [DataMember(Name = "sha256")] public string sha256 { get; set; }
+    }
+
+    internal sealed class UpdateAvailability
+    {
+        public UpdateRelease Mod { get; set; }
+        public LauncherRelease Launcher { get; set; }
+        public string CompatibilityMessage { get; set; }
     }
 
     internal sealed class UpdateService : IDisposable
@@ -53,6 +72,11 @@ namespace BD2PTBR.Installer
 
         public async Task<UpdateRelease> CheckAsync(string gameRoot, CancellationToken cancellation)
         {
+            return (await CheckAllAsync(gameRoot, cancellation)).Mod;
+        }
+
+        public async Task<UpdateAvailability> CheckAllAsync(string gameRoot, CancellationToken cancellation)
+        {
             using (var deadline = CancellationTokenSource.CreateLinkedTokenSource(cancellation))
             {
             deadline.CancelAfter(TimeSpan.FromSeconds(45));
@@ -62,23 +86,61 @@ namespace BD2PTBR.Installer
                 if (response.Content.Headers.ContentLength > 1024 * 1024) throw new InvalidDataException("Canal de atualização excede o limite de tamanho.");
                 var bytes = await ReadBoundedAsync(response, 1024 * 1024, cancellation);
                 var feed = JsonStorage.ReadText<UpdateFeed>(System.Text.Encoding.UTF8.GetString(bytes));
-                return SelectRelease(feed, gameRoot);
+                ValidateFeed(feed);
+                var available = new UpdateAvailability();
+                if (feed.launcher != null)
+                {
+                    ValidateLauncher(feed.launcher);
+                    if (Version.Parse(feed.launcher.version) > Version.Parse(InstallerEngine.InstallerVersion)) available.Launcher = feed.launcher;
+                }
+                if (!string.IsNullOrEmpty(gameRoot))
+                {
+                    string reason;
+                    available.Mod = SelectRelease(feed, gameRoot, out reason);
+                    available.CompatibilityMessage = reason;
+                }
+                return available;
             }
             }
         }
 
         internal static UpdateRelease SelectRelease(UpdateFeed feed, string gameRoot)
         {
+            string reason;
+            return SelectRelease(feed, gameRoot, out reason);
+        }
+
+        private static void ValidateFeed(UpdateFeed feed)
+        {
             if (feed == null || feed.schemaVersion != 1 || feed.releases == null || feed.releases.Count > 200)
                 throw new InvalidDataException("Canal de atualização inválido.");
             foreach (var release in feed.releases) ValidateRelease(release);
+        }
+
+        private static UpdateRelease SelectRelease(UpdateFeed feed, string gameRoot, out string reason)
+        {
+            ValidateFeed(feed);
+            reason = null;
             foreach (var release in feed.releases.OrderByDescending(r => Version.Parse(r.modVersion)))
             {
-                if (Version.Parse(release.minimumLauncherVersion) > Version.Parse(InstallerEngine.InstallerVersion)) continue;
-                try { GameCompatibility.EnsureAnyIdentity(gameRoot, release.compatibleClients); return release; }
-                catch (InvalidDataException) { }
+                if (Version.Parse(release.minimumLauncherVersion) > Version.Parse(InstallerEngine.InstallerVersion))
+                {
+                    if (reason == null) reason = "Atualize o aplicativo para instalar este catálogo.";
+                    continue;
+                }
+                try { GameCompatibility.EnsureCatalogCompatible(gameRoot, release.compatibleClients, release.integrationProfile); return release; }
+                catch (Exception error) when (error is InvalidDataException || error is IOException || error is BadImageFormatException || error is UnauthorizedAccessException)
+                { if (reason == null) reason = error.Message; }
             }
             return null;
+        }
+
+        internal static void ValidateLauncher(LauncherRelease release)
+        {
+            if (release == null) throw new InvalidDataException("Metadados do aplicativo ausentes.");
+            ValidateRelease(new UpdateRelease { modVersion = release.version, minimumLauncherVersion = "0.2.0", url = release.url, bytes = release.bytes, sha256 = release.sha256 });
+            if (!new Uri(release.url).AbsolutePath.EndsWith(".exe", StringComparison.OrdinalIgnoreCase))
+                throw new InvalidDataException("A atualização do aplicativo deve ser um executável oficial.");
         }
 
         internal static void ValidateRelease(UpdateRelease release)
@@ -98,23 +160,35 @@ namespace BD2PTBR.Installer
 
         public async Task<InstallerEngineOptions> DownloadAsync(UpdateRelease release, string gameRoot, IProgress<InstallerProgress> progress, CancellationToken cancellation)
         {
+            ValidateRelease(release);
+            GameCompatibility.EnsureCatalogCompatible(gameRoot, release.compatibleClients, release.integrationProfile);
+            var destination = await DownloadFileAsync(release.url, release.bytes, release.sha256, ".zip", "Baixando mod " + release.modVersion, progress, cancellation);
+            return new InstallerEngineOptions { PayloadPath = destination, ExpectedPayloadSha256 = release.sha256, ExpectedModVersion = release.modVersion };
+        }
+
+        public Task<string> DownloadLauncherAsync(LauncherRelease release, IProgress<InstallerProgress> progress, CancellationToken cancellation)
+        {
+            ValidateLauncher(release);
+            return DownloadFileAsync(release.url, release.bytes, release.sha256, ".exe", "Baixando aplicativo " + release.version, progress, cancellation);
+        }
+
+        private async Task<string> DownloadFileAsync(string url, long bytes, string sha256, string extension, string label, IProgress<InstallerProgress> progress, CancellationToken cancellation)
+        {
             using (var deadline = CancellationTokenSource.CreateLinkedTokenSource(cancellation))
             {
-            deadline.CancelAfter(TimeSpan.FromMinutes(5));
-            cancellation = deadline.Token;
-            ValidateRelease(release);
-            GameCompatibility.EnsureAnyIdentity(gameRoot, release.compatibleClients);
+                deadline.CancelAfter(TimeSpan.FromMinutes(5));
+                cancellation = deadline.Token;
             var cacheRoot = _cacheRootOverride ?? Path.Combine(Environment.GetFolderPath(Environment.SpecialFolder.LocalApplicationData), "Kacks", "BD2PTBR", "downloads");
             Directory.CreateDirectory(cacheRoot);
-            var destination = PathSafety.CombineUnder(cacheRoot, release.sha256.ToUpperInvariant() + ".zip");
-            if (!File.Exists(destination) || !Hashing.EqualsSha256(destination, release.sha256))
+            var destination = PathSafety.CombineUnder(cacheRoot, sha256.ToUpperInvariant() + extension);
+            if (!File.Exists(destination) || new FileInfo(destination).Length != bytes || !Hashing.EqualsSha256(destination, sha256))
             {
                 var temporary = destination + ".partial-" + Guid.NewGuid().ToString("N");
                 try
                 {
-                    using (var response = await GetAsync(new Uri(release.url), true, cancellation))
+                    using (var response = await GetAsync(new Uri(url), true, cancellation))
                     {
-                        if (response.Content.Headers.ContentLength.HasValue && response.Content.Headers.ContentLength != release.bytes)
+                        if (response.Content.Headers.ContentLength.HasValue && response.Content.Headers.ContentLength != bytes)
                             throw new InvalidDataException("Tamanho do download divergente.");
                         using (var input = await response.Content.ReadAsStreamAsync())
                         using (var output = new FileStream(temporary, FileMode.CreateNew, FileAccess.Write, FileShare.None, 65536, true))
@@ -125,21 +199,21 @@ namespace BD2PTBR.Installer
                             while ((count = await input.ReadAsync(buffer, 0, buffer.Length, cancellation)) > 0)
                             {
                                 total += count;
-                                if (total > release.bytes) throw new InvalidDataException("Download maior que o anunciado.");
+                                if (total > bytes) throw new InvalidDataException("Download maior que o anunciado.");
                                 await output.WriteAsync(buffer, 0, count, cancellation);
-                                progress?.Report(new InstallerProgress { Percent = (int)(100 * total / release.bytes), Phase = "DOWNLOAD", Message = "Baixando mod " + release.modVersion + ": " + total / 1024 + " KiB" });
+                                progress?.Report(new InstallerProgress { Percent = (int)(100 * total / bytes), Phase = "DOWNLOAD", Message = label + ": " + total / 1024 + " KiB" });
                             }
-                            if (total != release.bytes) throw new EndOfStreamException("Download incompleto.");
+                            if (total != bytes) throw new EndOfStreamException("Download incompleto.");
                             output.Flush(true);
                         }
                     }
-                    if (!Hashing.EqualsSha256(temporary, release.sha256)) throw new InvalidDataException("SHA-256 do download divergente.");
+                    if (!Hashing.EqualsSha256(temporary, sha256)) throw new InvalidDataException("SHA-256 do download divergente.");
                     if (File.Exists(destination)) File.Replace(temporary, destination, null);
                     else File.Move(temporary, destination);
                 }
                 finally { if (File.Exists(temporary)) File.Delete(temporary); }
             }
-            return new InstallerEngineOptions { PayloadPath = destination, ExpectedPayloadSha256 = release.sha256, ExpectedModVersion = release.modVersion };
+            return destination;
             }
         }
 
@@ -164,7 +238,12 @@ namespace BD2PTBR.Installer
             {
                 for (int redirects = 0; redirects <= 5; redirects++)
                 {
-                    var response = await _client.GetAsync(uri, HttpCompletionOption.ResponseHeadersRead, cancellation);
+                    HttpResponseMessage response;
+                    using (var request = new HttpRequestMessage(HttpMethod.Get, uri))
+                    {
+                        if (!asset) request.Headers.CacheControl = new System.Net.Http.Headers.CacheControlHeaderValue { NoCache = true, NoStore = true };
+                        response = await _client.SendAsync(request, HttpCompletionOption.ResponseHeadersRead, cancellation);
+                    }
                     int status = (int)response.StatusCode;
                     if (status >= 300 && status <= 399)
                     {

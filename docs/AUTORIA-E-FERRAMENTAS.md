@@ -6,9 +6,9 @@
 
 ## Procedência da tradução incremental
 
-Os lotes incrementais desta migração foram traduzidos diretamente pelo **OpenAI Codex**, a pedido do proprietário, a partir dos originais integrais. Traduções anteriores são reaproveitadas quando a correspondência de fonte e contexto é verificada. Essa atribuição se refere aos lotes incrementais, não a uma nova tradução de todo o catálogo histórico; as quantidades e a procedência de cada distribuição ficam nos registros e notas da Release.
+Os lotes incrementais preparados pelo Codex são traduzidos diretamente pelo **OpenAI Codex**, a pedido do proprietário, a partir dos originais integrais. Traduções anteriores são reaproveitadas quando a correspondência de fonte e contexto é verificada. Essa atribuição se refere aos lotes incrementais, não a uma nova tradução de todo o catálogo histórico; as quantidades e a procedência de cada distribuição ficam nos registros e notas da Release.
 
-O lote não deve ser apresentado como tradução produzida pelo Gacha PT-BR Studio nem como promoção de seus rascunhos. Os originais do Studio, a memória de tradução e o glossário permaneceram intactos. A integração usa o retorno direto autorizado, mantendo separada a procedência das traduções históricas.
+Esses lotes não devem ser apresentados como traduções produzidas pelo Gacha PT-BR Studio nem como promoção de seus rascunhos. Os originais do Studio, a memória de tradução e o glossário permaneceram intactos. A integração usa o retorno direto autorizado, mantendo separada a procedência das traduções históricas.
 
 O trabalho preserva marcadores, variáveis, números, quebras de linha e outros elementos estruturais das fontes. A comparação com o original para traduzir e as verificações automáticas de integridade não significam revisão humana integral. Não houve uma segunda revisão editorial geral de estilo deste lote; a condição de beta e a possibilidade de correções permanecem explícitas.
 
